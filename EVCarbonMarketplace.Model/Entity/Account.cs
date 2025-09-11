@@ -28,4 +28,8 @@ public partial class Account
     public DateTime? UpdateAt { get; set; }
 
     public DateTime? DeleteAt { get; set; }
+
+    public string? Username { get; set; }
+
+    public string? Password { get; set; }
 }

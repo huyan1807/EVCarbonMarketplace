@@ -12,6 +12,9 @@ using CloudinaryDotNet;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
+using EVCarbonMarketplace.Service.Interface;
+using EVCarbonMarketplace.Service.Implement;
+using StackExchange.Redis;
 namespace EVCarbonMarketplace.API
 {
     public static class DependencyInjection
@@ -101,7 +104,11 @@ namespace EVCarbonMarketplace.API
         }
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
-         
+
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IUploadService, UploadService>();
+            services.AddScoped<IEmailSender, EmailSender>();
+
 
             return services;
         }
@@ -123,5 +130,31 @@ namespace EVCarbonMarketplace.API
             {
             }
         }
+
+        public static IServiceCollection AddCloudinary(this IServiceCollection services, IConfiguration configuration)
+        {
+            var account = new CloudinaryDotNet.Account(
+                configuration["Cloudinary:CloudName"],
+                configuration["Cloudinary:ApiKey"],
+                configuration["Cloudinary:Secret"]);
+
+            var cloudinary = new Cloudinary(account)
+            {
+                Api = { Secure = true }
+            };
+
+            services.AddSingleton(account);
+            services.AddSingleton(cloudinary);
+            return services;
+        }
+        public static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration)
+        {
+            var redisConn = configuration.GetConnectionString("Redis")
+                ?? throw new InvalidOperationException("Redis connection string not found");
+            services.AddSingleton<IConnectionMultiplexer>(
+                _ => ConnectionMultiplexer.Connect(redisConn));
+            return services;
+        }
+
     }
 }

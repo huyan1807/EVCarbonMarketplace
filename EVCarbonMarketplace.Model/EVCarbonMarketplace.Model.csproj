@@ -36,11 +36,7 @@
 		<PackageReference Include="StackExchange.Redis" Version="2.8.37" />
 	</ItemGroup>
   <ItemGroup>
-    <Folder Include="Enum\" />
-    <Folder Include="Mapper\" />
     <Folder Include="Entity\" />
-    <Folder Include="Payload\Request\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>

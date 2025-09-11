@@ -9,7 +9,7 @@
   <ItemGroup>
 	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
 
-	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.8" />
@@ -17,6 +17,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EVCarbonMarketplace.Service\EVCarbonMarketplace.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\css\" />
   </ItemGroup>
 
 </Project>

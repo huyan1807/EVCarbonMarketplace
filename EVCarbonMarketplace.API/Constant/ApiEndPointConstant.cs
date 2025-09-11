@@ -12,6 +12,9 @@
 
         public static class Account
         {
+           public const string AccountEndPoint = ApiEndpoint + "/account";
+           public const string Otp = AccountEndPoint + "/otp";
+           public const string Register = AccountEndPoint + "/register/CcBuyer";
         }
     }
 }

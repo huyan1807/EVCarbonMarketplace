@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Implement\" />
-    <Folder Include="Interface\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\EVCarbonMarketplace.Repository\EVCarbonMarketplace.Repository.csproj" />
   </ItemGroup>
 
