@@ -108,6 +108,7 @@ namespace EVCarbonMarketplace.API
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUploadService, UploadService>();
             services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<IAuthenticateService, AuthenticateService>();
 
 
             return services;

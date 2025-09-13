@@ -1,12 +1,8 @@
 ﻿using EVCarbonMarketplace.Model.Enum;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EVCarbonMarketplace.Model.Payload.Request
+
+namespace EVCarbonMarketplace.Model.Payload.Request.Account
 {
     public class RegisterRequest
     {
@@ -27,6 +23,5 @@ namespace EVCarbonMarketplace.Model.Payload.Request
         public GenderEnum Gender { get; set; }
 
         public IFormFile? AvatarUrl { get; set; }
-
     }
 }

@@ -82,7 +82,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.Configure<SMTPSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-//builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();
 app.UseStaticFiles();

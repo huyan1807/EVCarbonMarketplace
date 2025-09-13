@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using EVCarbonMarketplace.Model.Entity;
 using EVCarbonMarketplace.Model.Exceptions;
-using EVCarbonMarketplace.Model.Payload.Request;
+using EVCarbonMarketplace.Model.Payload.Request.Account;
 using EVCarbonMarketplace.Model.Payload.Response;
+using EVCarbonMarketplace.Model.Payload.Response.Account;
+using EVCarbonMarketplace.Model.Payload.Response.User;
 using EVCarbonMarketplace.Model.Payload.Settings;
 using EVCarbonMarketplace.Model.Utils;
 using EVCarbonMarketplace.Repository.Interface;
@@ -38,6 +40,10 @@ namespace EVCarbonMarketplace.Service.Implement
             _uploadService = uploadService;
         }
 
+      
+
+       
+
         public async Task<BaseResponse<RegisterResponse>> Register(RegisterRequest request)
         {
             var accounts = await _unitOfWork.GetRepository<Account>().GetListAsync();
@@ -50,11 +56,11 @@ namespace EVCarbonMarketplace.Service.Implement
             var redisDb = _redis.GetDatabase();
             if (redisDb == null) throw new RedisServerException("Không thể kết nối tới Redis");
 
-            var key = "emailOtp" + request.Email;
-            var stored = await redisDb.StringGetAsync(key);
+            var key = "emailOtp:" + request.Email;
+             var stored = await redisDb.StringGetAsync(key);
             if (string.IsNullOrEmpty(stored))
                 throw new NotFoundException("Không tìm thấy mã OTP");
-            if (!string.IsNullOrEmpty(stored))
+            if (!stored.Equals(request.Otp))
                 throw new BadHttpRequestException("Mã OTP không chính xác");
 
             var account = _mapper.Map<Account>(request);
@@ -79,6 +85,8 @@ namespace EVCarbonMarketplace.Service.Implement
 
 
         }
+
+        
 
         public async Task<BaseResponse<bool>> SendOtp(string email)
         {
@@ -129,6 +137,135 @@ namespace EVCarbonMarketplace.Service.Implement
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Gửi mã OTP thành công",
                 Data = true
+            };
+        }
+
+    
+        public async Task<BaseResponse<bool>> ChangePassword(ChangePasswordRequest request)
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(                
+              predicate: a => a.Id == accountId && a.IsActive ==true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+            if (!account.Password.Equals(PasswordUtil.HashPassword(request.OldPassword)))
+                throw new BadHttpRequestException("Mật khẩu cũ không trùng khớp");
+            if(!request.NewPassword.Equals(request.ConfirmPassword))
+                throw new BadHttpRequestException("Mật khẩu mới và xác nhận mật khẩu mới không trùng khớp");
+            account.Password = PasswordUtil.HashPassword(request.NewPassword);
+            account.UpdateAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+            if (!isSuccess) throw new Exception("Có lỗi trong quá trình đổi mật khẩu");
+            return new BaseResponse<bool>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Thay đổi mật khẩu thành công",
+                Data = true
+            };
+
+        }
+
+        public async Task<BaseResponse<bool>> ForgotPassword(string email)
+        {
+          var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Email == email && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+            var otpResult = await SendOtp(email);
+            if(otpResult.Data == false)
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = otpResult.Status,
+                    Message = otpResult.Message,
+                    Data = false
+                };
+            }
+            return new BaseResponse<bool>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Gửi mã xác nhận quên mật khẩu thành công",
+                Data = true
+            };
+
+        }
+        public async Task<BaseResponse<GetUserResponse>> VerifyOtp(string email, string otp)
+        {
+           var redisDb = _redis.GetDatabase();
+            if (redisDb == null) throw new RedisServerException("Không thể kết nối tới Redis");
+
+            var key = "emailOtp:" + email;
+            var storedOtp = await redisDb.StringGetAsync(key);
+            if(string.IsNullOrEmpty(storedOtp))
+                throw new NotFoundException("Không tìm thấy mã OTP");
+            if (!storedOtp.Equals(otp))
+                throw new BadHttpRequestException("Mã OTP không chính xác");
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Email == email && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+            await redisDb.KeyDeleteAsync(key);
+            return new BaseResponse<GetUserResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Xác thực mã OTP thành công",
+                Data = new GetUserResponse
+                {
+                    AccountId = account.Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    AvatarUrl = account.AvatarUrl,
+                }
+            };
+        }
+        public async Task<BaseResponse<GetUserResponse>> ResetPassword(ResetPasswordRequest request)
+        {
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Email == request.Email && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+            if (!request.NewPassword.Equals(request.ConfirmPassword))
+                throw new BadHttpRequestException("Mật khẩu mới và xác nhận mật khẩu mới không trùng khớp");
+            account.Password = PasswordUtil.HashPassword(request.NewPassword);
+            account.UpdateAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+            if (!isSuccess) throw new Exception("Có lỗi trong quá trình đổi mật khẩu");
+            return new BaseResponse<GetUserResponse> {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Đặt lại mật khẩu thành công",
+                Data = new GetUserResponse
+                {
+                    AccountId = account.Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    AvatarUrl = account.AvatarUrl,
+                }
+
+            };
+        }
+        public async Task<BaseResponse<GetUserResponse>> ChangeAvatar(IFormFile file)
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                          predicate: a => a.Id == accountId && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+            account.AvatarUrl = await _uploadService.UploadImage(file);
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+            if (!isSuccess) throw new Exception("Có lỗi trong quá trình đổi ảnh đại diện");
+            return new BaseResponse<GetUserResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Đổi ảnh đại diện thành công",
+                Data = new GetUserResponse
+                {
+                    AccountId = account.Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    AvatarUrl = account.AvatarUrl,
+                }
             };
         }
     }
