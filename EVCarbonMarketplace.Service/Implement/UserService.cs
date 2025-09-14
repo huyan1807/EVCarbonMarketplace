@@ -2,6 +2,8 @@
 using EVCarbonMarketplace.Model.Entity;
 using EVCarbonMarketplace.Model.Enum;
 using EVCarbonMarketplace.Model.Exceptions;
+using EVCarbonMarketplace.Model.Paginate;
+using EVCarbonMarketplace.Model.Payload.Request.User;
 using EVCarbonMarketplace.Model.Payload.Response;
 using EVCarbonMarketplace.Model.Payload.Response.Authentication;
 using EVCarbonMarketplace.Model.Payload.Response.GoogleAuthentication;
@@ -10,6 +12,7 @@ using EVCarbonMarketplace.Model.Utils;
 using EVCarbonMarketplace.Repository.Interface;
 using EVCarbonMarketplace.Service.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -130,6 +133,8 @@ namespace EVCarbonMarketplace.Service.Implement
             };
         }
 
+     
+
         public async Task<bool> GetAccountByEmail(string email)
         {
             if (email == null) throw new BadHttpRequestException("Email không được để null");
@@ -138,6 +143,155 @@ namespace EVCarbonMarketplace.Service.Implement
                 predicate: p => p.Email.Equals(email)
             );
             return account != null;
+        }
+
+        public async Task<BaseResponse<IPaginate<GetUserResponse>>> GetAllUsers(int page, int size, RoleEnum role)
+        {
+            if (page < 1 || size < 1)
+            {
+                throw new BadHttpRequestException("Số trang và số lượng trong trang phải lớn hơn hoặc bằng 1");
+            }
+            var users = await _unitOfWork.GetRepository<Account>().GetPagingListAsync(
+               selector: u => new GetUserResponse
+               {
+                   AccountId = u.Id,
+                   FullName = u.FullName,
+                   Email = u.Email,
+                   Phone = u.Phone,
+                   DateOfBirth = u.DateOfBirth,
+                   AvatarUrl = u.AvatarUrl,
+                   Gender = u.Gender,
+               },
+               predicate: u => u.IsActive == true && u.Role.Equals(role.ToString()),
+               orderBy: u => u.OrderByDescending(u => u.CreateAt),
+               page: page,
+               size: size);
+
+            return new BaseResponse<IPaginate<GetUserResponse>>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy danh sách thông tin người dùng thành công",
+                Data = users
+            };
+        }
+
+        public async Task<BaseResponse<GetUserResponse>> GetUser(Guid id)
+        {
+            var user = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+               selector: u => new GetUserResponse
+               {
+                   AccountId = u.Id,
+                   FullName = u.FullName,
+                   Email = u.Email,
+                   Phone = u.Phone,
+                   DateOfBirth = u.DateOfBirth,
+                   AvatarUrl = u.AvatarUrl,
+                   Gender = u.Gender,             
+               },
+               predicate: u => u.IsActive == true && u.Id.Equals(id)
+              );
+
+
+            if (user == null)
+            {
+                throw new NotFoundException("Không tìm thấy thông tin người dùng");
+            }
+
+            return new BaseResponse<GetUserResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy thông tin người dùng thành công",
+                Data = user
+            };
+        }
+
+        public async Task<BaseResponse<GetUserResponse>> GetUserProfile()
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true
+               ) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+
+            return new BaseResponse<GetUserResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy thông tin người dùng thành công",
+                Data = new GetUserResponse
+                {
+                    AccountId = accountId,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    AvatarUrl = account.AvatarUrl,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,               
+                }
+            };
+        }
+
+        public async Task<BaseResponse<GetUserResponse>> UpdateUser(UpdateUserRequest request)
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true
+               ) ?? throw new NotFoundException("Không tìm thấy tài khoản người dùng");
+
+            account.FullName = request.FullName ?? account.FullName;
+            account.Phone = request.Phone ?? account.Phone;
+            account.DateOfBirth = request.DateOfBirth ?? account.DateOfBirth;
+            account.Gender = request.Gender?.GetDescriptionFromEnum() ?? account.Gender;          
+            account.UpdateAt = TimeUtil.GetCurrentSEATime();
+
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+
+            if (!isSuccess)
+            {
+                throw new Exception("Một lỗi đã xảy ra trong quá trình cập nhật tài khoản");
+            }
+
+            return new BaseResponse<GetUserResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Cập nhật tài khoản thành công",
+                Data = new GetUserResponse
+                {
+                    AccountId = account.Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    AvatarUrl = account.AvatarUrl,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,                
+                }
+            };
+        }
+        public async Task<BaseResponse<bool>> DeleteUser(Guid id)
+        {
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: p => p.Id == id && p.IsActive == true && p.DeleteAt == null
+            );
+            if (account == null) throw new NotFoundException("Không tìm thấy tài khoản người dùng");
+            account.IsActive = false;
+            account.DeleteAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+
+            if (!isSuccess)
+            {
+                throw new Exception("Một lỗi đã xảy ra trong quá trình xóa tài khoản");
+            }
+
+            return new BaseResponse<bool>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Xóa tài khoản thành công",
+                Data = true
+            };
         }
     }
 }

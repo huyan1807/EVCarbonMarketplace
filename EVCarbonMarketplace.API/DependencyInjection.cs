@@ -59,7 +59,7 @@ namespace EVCarbonMarketplace.API
             {
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    ValidIssuer = "MATHGENERATOR",
+                    ValidIssuer = "EVCarBonMarketplace",
                     ValidateIssuer = true,
                     ValidateAudience = false,
                     ValidateIssuerSigningKey = true,
@@ -111,6 +111,7 @@ namespace EVCarbonMarketplace.API
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGoogleAuthenticationService, GoogleAuthenticationService>();
+
             
 
 

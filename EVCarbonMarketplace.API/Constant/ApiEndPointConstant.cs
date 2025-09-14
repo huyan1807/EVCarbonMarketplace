@@ -33,5 +33,15 @@
             public const string GoogleAuthLogin = GoogleAuthEndPoint + "/login";
             public const string GoogleAuthSignIn = GoogleAuthEndPoint + "/sign-in";
         }
+        public static class User
+        {
+            public const string UserEndPoint = ApiEndpoint + "/user";
+            public const string GetProfile = UserEndPoint + "/profile";
+            public const string GetAllUsers = UserEndPoint;
+            public const string GetUser = UserEndPoint + "/{id}";
+            public const string DeleteUser = UserEndPoint + "/{id}";
+            public const string UpdateUser = UserEndPoint;
+        }
+
     }
 }
