@@ -42,6 +42,16 @@
             public const string DeleteUser = UserEndPoint + "/{id}";
             public const string UpdateUser = UserEndPoint;
         }
+        public static class Owner
+        {
+            public const string OwnerEndPoint = ApiEndpoint + "/owner";
+            public const string Register = OwnerEndPoint + "/register";
+        }
+        public static class Cva
+        {
+            public const string CvaEndPoint = ApiEndpoint + "/cva";
+            public const string Register = CvaEndPoint + "/register";
+        }
 
     }
 }

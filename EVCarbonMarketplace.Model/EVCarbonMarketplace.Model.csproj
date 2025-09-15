@@ -37,6 +37,7 @@
 	</ItemGroup>
   <ItemGroup>
     <Folder Include="Entity\" />
+    <Folder Include="Payload\Response\Owner\" />
   </ItemGroup>
 
 </Project>

@@ -111,8 +111,11 @@ namespace EVCarbonMarketplace.API
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGoogleAuthenticationService, GoogleAuthenticationService>();
+            services.AddScoped<IOwnerService, OwnerService>();
+            services.AddScoped<ICvaService, CvaService>();
 
-            
+
+
 
 
             return services;
