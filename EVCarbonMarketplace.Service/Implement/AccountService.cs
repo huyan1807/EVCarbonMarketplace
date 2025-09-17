@@ -68,6 +68,17 @@ namespace EVCarbonMarketplace.Service.Implement
 
             await _unitOfWork.GetRepository<Account>().InsertAsync(account);
             // thiếu tạo ví 
+            var wallet = new Wallet
+            {
+                Id = Guid.NewGuid(),
+                AccountId = account.Id,
+                CarbonUnit = 0,
+                Cash = 0,
+                IsActive = true,
+                CreateAt = TimeUtil.GetCurrentSEATime(),
+                UpdateAt = TimeUtil.GetCurrentSEATime()
+            };
+            await _unitOfWork.GetRepository<Wallet>().InsertAsync(wallet);
 
 
             var isSuccess = await _unitOfWork.CommitAsync() > 0;

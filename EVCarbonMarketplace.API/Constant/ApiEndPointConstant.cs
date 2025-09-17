@@ -53,5 +53,19 @@
             public const string Register = CvaEndPoint + "/register";
         }
 
+        public static class EVehicle
+        {
+            public const string ElectricVehicle = ApiEndpoint + "/electric-vehicle";
+            public const string Create = ElectricVehicle;
+            public const string Update = ElectricVehicle + "/{id}";
+            public const string GetAll = ElectricVehicle;
+            public const string GetById = ElectricVehicle + "/{id}";
+            public const string Delete = ElectricVehicle + "/{id}";
+            public const string ChangeImage = Update + "/change-image";
+            public const string GetMyEVehicles = ElectricVehicle + "/my-vehicles";
+
+
+        }
+
     }
 }

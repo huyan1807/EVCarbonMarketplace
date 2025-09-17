@@ -7,6 +7,10 @@ public partial class Account
 {
     public Guid Id { get; set; }
 
+    public string? Username { get; set; }
+
+    public string? Password { get; set; }
+
     public string? Role { get; set; }
 
     public string? FullName { get; set; }
@@ -29,7 +33,25 @@ public partial class Account
 
     public DateTime? DeleteAt { get; set; }
 
-    public string? Username { get; set; }
+    public virtual ICollection<Bid> Bids { get; set; } = new List<Bid>();
 
-    public string? Password { get; set; }
+    public virtual ICollection<CarbonCredit> CarbonCredits { get; set; } = new List<CarbonCredit>();
+
+    public virtual ICollection<CarbonListing> CarbonListings { get; set; } = new List<CarbonListing>();
+
+    public virtual ICollection<Certificate> CertificateBuyers { get; set; } = new List<Certificate>();
+
+    public virtual ICollection<Certificate> CertificateIssuedBies { get; set; } = new List<Certificate>();
+
+    public virtual ICollection<Deposit> Deposits { get; set; } = new List<Deposit>();
+
+    public virtual ICollection<Dispute> Disputes { get; set; } = new List<Dispute>();
+
+    public virtual ICollection<ElectricVehicle> ElectricVehicles { get; set; } = new List<ElectricVehicle>();
+
+    public virtual ICollection<Transaction> TransactionBuyers { get; set; } = new List<Transaction>();
+
+    public virtual ICollection<Transaction> TransactionSellers { get; set; } = new List<Transaction>();
+
+    public virtual ICollection<Wallet> Wallets { get; set; } = new List<Wallet>();
 }
