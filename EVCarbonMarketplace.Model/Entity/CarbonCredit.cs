@@ -13,8 +13,6 @@ public partial class CarbonCredit
 
     public decimal? Credits { get; set; }
 
-    public string? Status { get; set; }
-
     public bool? IsActive { get; set; }
 
     public DateTime? CreateAt { get; set; }

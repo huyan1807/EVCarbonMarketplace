@@ -9,8 +9,6 @@ public partial class CarbonEmission
 
     public Guid? ElectricVehicleId { get; set; }
 
-    public Guid? VehicleTelemetryId { get; set; }
-
     public decimal? DistanceTravelled { get; set; }
 
     public decimal? EnergyConsumed { get; set; }
@@ -29,9 +27,11 @@ public partial class CarbonEmission
 
     public DateTime? DeleteAt { get; set; }
 
+    public string? Status { get; set; }
+
     public virtual ICollection<CarbonCredit> CarbonCredits { get; set; } = new List<CarbonCredit>();
 
     public virtual ElectricVehicle? ElectricVehicle { get; set; }
 
-    public virtual VehicleTelemetry? VehicleTelemetry { get; set; }
+    public virtual ICollection<VehicleTelemetry> VehicleTelemetries { get; set; } = new List<VehicleTelemetry>();
 }

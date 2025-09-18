@@ -63,8 +63,21 @@
             public const string Delete = ElectricVehicle + "/{id}";
             public const string ChangeImage = Update + "/change-image";
             public const string GetMyEVehicles = ElectricVehicle + "/my-vehicles";
-
-
+        }
+        public static class CarbonEmissions
+        {
+            public const string CarbonEmission = ApiEndpoint + "/carbon-emission";
+            public const string GetById = CarbonEmission + "/{id}";
+            public const string GetAll = CarbonEmission;
+            public const string GetByEVehicle = CarbonEmission + "/by-EVehicle/{Id}";
+            public const string Create = CarbonEmission + "/by-EVehicle/{Id}";
+            public const string ApproveEmission = CarbonEmission + "/{id}/approve";
+        }
+        public static class CarbonCredits
+        {
+            public const string CarbonCredit = ApiEndpoint + "/carbon-credit";
+            public const string GetMyCredits = CarbonCredit + "/my-credits";
+            public const string GetAll = CarbonCredit;
         }
 
     }

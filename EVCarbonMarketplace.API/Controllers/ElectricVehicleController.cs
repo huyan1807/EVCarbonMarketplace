@@ -84,6 +84,18 @@ namespace EVCarbonMarketplace.API.Controllers
             return StatusCode(StatusCodes.Status200OK, response);
         }
 
+        [HttpGet(ApiEndPointConstant.EVehicle.GetById)]
+        [ProducesResponseType(typeof(BaseResponse<ElectricVehicleResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<ElectricVehicleResponse>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        {
+            var response = await _electricVehicleService.GetById(id);
+            return StatusCode(StatusCodes.Status200OK, response);
+        }
+
+
+
 
 
     }

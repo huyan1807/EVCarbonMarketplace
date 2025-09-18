@@ -27,7 +27,9 @@ public partial class VehicleTelemetry
 
     public DateTime? DeleteAt { get; set; }
 
-    public virtual ICollection<CarbonEmission> CarbonEmissions { get; set; } = new List<CarbonEmission>();
+    public Guid? CarbonEmissionId { get; set; }
+
+    public virtual CarbonEmission? CarbonEmission { get; set; }
 
     public virtual ElectricVehicle? ElectricVehicle { get; set; }
 }

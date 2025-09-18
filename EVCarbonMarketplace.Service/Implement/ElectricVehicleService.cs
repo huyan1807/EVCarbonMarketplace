@@ -149,6 +149,24 @@ namespace EVCarbonMarketplace.Service.Implement
 
         }
 
+        public async Task<BaseResponse<ElectricVehicleResponse>> GetById(Guid id)
+        {
+           
+            var EVehicle = await _unitOfWork.GetRepository<ElectricVehicle>().SingleOrDefaultAsync(
+                predicate: x => x.Id == id && x.IsActive == true,
+                include: x => x.Include(x => x.VehicleType)
+                ) ?? throw new NotFoundException("Không tìm thấy xe điện");
+            var evResponse = _mapper.Map<ElectricVehicleResponse>(EVehicle);
+            evResponse.VehicleType = EVehicle.VehicleType.Name;
+            return new BaseResponse<ElectricVehicleResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy thông tin xe điện thành công",
+                Data = evResponse
+            };
+
+        }
+
         public async Task<BaseResponse<IPaginate<ElectricVehicleResponse>>> GetMyEVehicles(int page, int size)
         {
             var accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);

@@ -42,6 +42,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
     public virtual DbSet<Wallet> Wallets { get; set; }
 
+
     public static string GetConnectionString(string connectionStringName)
     {
         var config = new ConfigurationBuilder()
@@ -55,6 +56,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer(GetConnectionString("DefautDB")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
@@ -109,7 +111,6 @@ public partial class EvcarbonMarketplaceContext : DbContext
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.Credits).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
 
             entity.HasOne(d => d.Account).WithMany(p => p.CarbonCredits)
@@ -137,15 +138,12 @@ public partial class EvcarbonMarketplaceContext : DbContext
             entity.Property(e => e.EnergyConsumed).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.PeriodEnd).HasColumnType("datetime");
             entity.Property(e => e.PeriodStart).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
 
             entity.HasOne(d => d.ElectricVehicle).WithMany(p => p.CarbonEmissions)
                 .HasForeignKey(d => d.ElectricVehicleId)
                 .HasConstraintName("FK_CarbonEmission_ElectricVehicleId");
-
-            entity.HasOne(d => d.VehicleTelemetry).WithMany(p => p.CarbonEmissions)
-                .HasForeignKey(d => d.VehicleTelemetryId)
-                .HasConstraintName("FK_CarbonEmission_VehicleTelemetryId");
         });
 
         modelBuilder.Entity<CarbonListing>(entity =>
@@ -319,6 +317,10 @@ public partial class EvcarbonMarketplaceContext : DbContext
             entity.Property(e => e.EnergyConsumed).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.LoggedAt).HasColumnType("datetime");
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.CarbonEmission).WithMany(p => p.VehicleTelemetries)
+                .HasForeignKey(d => d.CarbonEmissionId)
+                .HasConstraintName("FK_VehicleTelemetry_CarbonEmission");
 
             entity.HasOne(d => d.ElectricVehicle).WithMany(p => p.VehicleTelemetries)
                 .HasForeignKey(d => d.ElectricVehicleId)

@@ -24,6 +24,8 @@ namespace EVCarbonMarketplace.Service.Interface
 
         Task<BaseResponse<IPaginate<ElectricVehicleResponse>>> GetMyEVehicles(int page, int size);
 
+        Task<BaseResponse<ElectricVehicleResponse>> GetById(Guid id);
+
 
     }
 }
