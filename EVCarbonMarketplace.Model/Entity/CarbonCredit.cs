@@ -21,6 +21,8 @@ public partial class CarbonCredit
 
     public DateTime? DeleteAt { get; set; }
 
+    public string? Status { get; set; }
+
     public virtual Account? Account { get; set; }
 
     public virtual CarbonEmission? CarbonEmission { get; set; }

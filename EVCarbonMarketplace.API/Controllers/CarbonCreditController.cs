@@ -1,4 +1,5 @@
 ﻿using EVCarbonMarketplace.API.Constant;
+using EVCarbonMarketplace.Model.Enum;
 using EVCarbonMarketplace.Model.Paginate;
 using EVCarbonMarketplace.Model.Payload.Response;
 using EVCarbonMarketplace.Model.Payload.Response.CarbonCredit;
@@ -21,9 +22,9 @@ namespace EVCarbonMarketplace.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonCreditResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<CarbonCreditResponse>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetMyCredits()
+        public async Task<IActionResult> GetMyCredits([FromQuery] CarbonCreditEnum status)
         {
-            var response = await _carbonCreditService.GetMyCredits();
+            var response = await _carbonCreditService.GetMyCredits(status);
             return StatusCode(StatusCodes.Status200OK, response);
         }
         [Authorize(Roles = "Cva,Admin")]
@@ -31,9 +32,9 @@ namespace EVCarbonMarketplace.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonCreditManageResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<CarbonCreditManageResponse>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int size = 10)
+        public async Task<IActionResult> GetAll([FromQuery] CarbonCreditEnum status, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
-            var response = await _carbonCreditService.GetAllCredits(page, size);
+            var response = await _carbonCreditService.GetAllCredits(page, size,status);
             return StatusCode(StatusCodes.Status200OK, response);
         }
 

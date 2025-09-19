@@ -1,4 +1,5 @@
 ﻿using EVCarbonMarketplace.Model.Entity;
+using EVCarbonMarketplace.Model.Enum;
 using EVCarbonMarketplace.Model.Paginate;
 using EVCarbonMarketplace.Model.Payload.Response;
 using EVCarbonMarketplace.Model.Payload.Response.CarbonCredit;
@@ -12,8 +13,8 @@ namespace EVCarbonMarketplace.Service.Interface
 {
     public interface ICarbonCreditService
     {
-        Task<BaseResponse<IPaginate<CarbonCreditResponse>>> GetMyCredits();
+        Task<BaseResponse<IPaginate<CarbonCreditResponse>>> GetMyCredits(CarbonCreditEnum status);
 
-        Task<BaseResponse<IPaginate<CarbonCreditManageResponse>>> GetAllCredits(int page ,int size);
+        Task<BaseResponse<IPaginate<CarbonCreditManageResponse>>> GetAllCredits(int page ,int size , CarbonCreditEnum status);
     }
 }

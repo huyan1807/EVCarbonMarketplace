@@ -10,6 +10,8 @@ namespace EVCarbonMarketplace.Model.Payload.Response.CarbonCredit
     {
         public Guid Id { get; set; }
         public Guid? CarbonEmissionId { get; set; }
+
+        public string? Status { get; set; }
         public decimal? Credits { get; set; }
         public DateTime? CreateAt { get; set; }
         public Guid? ElectricVehicleId { get; set; }

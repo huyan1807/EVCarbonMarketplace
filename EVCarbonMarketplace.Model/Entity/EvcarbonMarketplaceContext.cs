@@ -42,7 +42,6 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
     public virtual DbSet<Wallet> Wallets { get; set; }
 
-
     public static string GetConnectionString(string connectionStringName)
     {
         var config = new ConfigurationBuilder()
@@ -111,6 +110,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.Credits).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(20);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
 
             entity.HasOne(d => d.Account).WithMany(p => p.CarbonCredits)

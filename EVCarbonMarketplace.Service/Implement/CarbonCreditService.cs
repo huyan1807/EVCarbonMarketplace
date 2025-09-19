@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EVCarbonMarketplace.Model.Entity;
+using EVCarbonMarketplace.Model.Enum;
 using EVCarbonMarketplace.Model.Exceptions;
 using EVCarbonMarketplace.Model.Paginate;
 using EVCarbonMarketplace.Model.Payload.Response;
@@ -25,7 +26,7 @@ namespace EVCarbonMarketplace.Service.Implement
 
         }
 
-        public async Task<BaseResponse<IPaginate<CarbonCreditManageResponse>>> GetAllCredits(int page, int size)
+        public async Task<BaseResponse<IPaginate<CarbonCreditManageResponse>>> GetAllCredits(int page, int size , CarbonCreditEnum status)
         {
             var credits = await _unitOfWork.GetRepository<CarbonCredit>().GetPagingListAsync(
 
@@ -38,6 +39,7 @@ namespace EVCarbonMarketplace.Service.Implement
                     CarbonEmissionId = x.CarbonEmissionId,
                     CreateAt = x.CreateAt,
                     Credits = x.Credits,
+                    Status = x.Status.ToString(),
                     ElectricVehicleId = x.CarbonEmission.ElectricVehicleId,
                     ImageUrl = x.CarbonEmission.ElectricVehicle.ImageUrl,
                     LicensePlate = x.CarbonEmission.ElectricVehicle.LicensePlate,
@@ -48,7 +50,7 @@ namespace EVCarbonMarketplace.Service.Implement
 
 
                 },
-                predicate: x => x.IsActive == true,
+                predicate: x => x.IsActive == true && (status == null || x.Status.Equals(status.ToString())),
                 include: x => x.Include(x => x.Account).Include(c => c.CarbonEmission).ThenInclude(e => e.ElectricVehicle),
                 page: page,
                 size: size
@@ -63,7 +65,7 @@ namespace EVCarbonMarketplace.Service.Implement
 
         }
 
-        public async Task<BaseResponse<IPaginate<CarbonCreditResponse>>> GetMyCredits()
+        public async Task<BaseResponse<IPaginate<CarbonCreditResponse>>> GetMyCredits(CarbonCreditEnum status)
         {
             var accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
@@ -77,6 +79,7 @@ namespace EVCarbonMarketplace.Service.Implement
                     Id = s.Id,
                     CarbonEmissionId = s.CarbonEmissionId,
                     Credits = s.Credits,
+                    Status = s.Status.ToString(),
                     CreateAt = s.CreateAt,
                     BatteryCapacity = s.CarbonEmission.ElectricVehicle.BatteryCapacity,
                     Brand = s.CarbonEmission.ElectricVehicle.Brand,
@@ -90,7 +93,7 @@ namespace EVCarbonMarketplace.Service.Implement
 
                 },
 
-                predicate: x => x.AccountId == accountId && x.IsActive == true,
+                predicate: x => x.AccountId == accountId && x.IsActive == true && (status ==null || x.Status.Equals(status.ToString())),
 
                 include: x => x.Include(c => c.CarbonEmission).ThenInclude(e => e.ElectricVehicle)                            
                 );

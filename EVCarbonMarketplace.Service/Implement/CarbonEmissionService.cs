@@ -53,7 +53,8 @@ namespace EVCarbonMarketplace.Service.Implement
                     CarbonEmissionId = emission.Id,
                     Credits = credit,                
                     IsActive = true,
-                    CreateAt = TimeUtil.GetCurrentSEATime(),                 
+                    CreateAt = TimeUtil.GetCurrentSEATime(),
+                    Status = CarbonCreditEnum.Available.ToString()
                 };
                 await _unitOfWork.GetRepository<CarbonCredit>().InsertAsync(carbonCredit);
                 //

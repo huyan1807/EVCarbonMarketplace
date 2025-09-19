@@ -13,6 +13,7 @@ namespace EVCarbonMarketplace.Model.Payload.Response.CarbonCredit
         public Guid? AccountId { get; set; }
 
         public decimal? Credits { get; set; }
+        public string? Status { get; set; }
         public DateTime? CreateAt { get; set; }
 
         public string? OwnerName { get; set; }
