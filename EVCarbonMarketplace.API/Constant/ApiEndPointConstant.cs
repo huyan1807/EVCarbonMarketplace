@@ -87,5 +87,17 @@
             public const string Webhook = PaymentEndPoint + "/webhook";
         }
 
+        public static class VehicleType
+        {
+            public const string VehicleTypeEndPoint = ApiEndpoint + "/vehicle-type";
+            public const string GetAll = VehicleTypeEndPoint;
+        }
+
+        public static class Wallet
+        {
+            public const string WalletEndPoint = ApiEndpoint + "/wallet";
+            public const string GetMyWallet = WalletEndPoint + "/my-wallet";
+        }
+
     }
 }
