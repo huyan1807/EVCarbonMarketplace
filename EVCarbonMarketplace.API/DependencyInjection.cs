@@ -98,7 +98,7 @@ namespace EVCarbonMarketplace.API
                  .SetBasePath(Directory.GetCurrentDirectory())
                         .AddJsonFile("appsettings.json", true, true)
                         .Build();
-            var strConn = config["ConnectionStrings:DefautDB"];
+            var strConn = config["ConnectionStrings:DefaultDB"];
 
             return strConn;
         }
