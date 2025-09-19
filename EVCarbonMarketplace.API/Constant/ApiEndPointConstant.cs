@@ -80,5 +80,12 @@
             public const string GetAll = CarbonCredit;
         }
 
+        public static class Payment
+        {
+            public const string PaymentEndPoint = ApiEndpoint + "/payment";
+            public const string Create = PaymentEndPoint;
+            public const string Webhook = PaymentEndPoint + "/webhook";
+        }
+
     }
 }

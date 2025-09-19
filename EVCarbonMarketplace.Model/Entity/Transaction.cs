@@ -31,6 +31,8 @@ public partial class Transaction
 
     public Guid? CarbonListingId { get; set; }
 
+    public string? Description { get; set; }
+
     public virtual Account? Buyer { get; set; }
 
     public virtual CarbonListing? CarbonListing { get; set; }

@@ -44,6 +44,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddHttpClientServices();
 builder.Services.AddCloudinary(builder.Configuration);
 builder.Services.AddRedis(builder.Configuration);
+builder.Services.Configure<PayOSSettings>(builder.Configuration.GetSection("PayOS"));
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;

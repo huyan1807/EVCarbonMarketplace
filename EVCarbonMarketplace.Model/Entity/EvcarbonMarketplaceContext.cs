@@ -56,11 +56,12 @@ public partial class EvcarbonMarketplaceContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer(GetConnectionString("DefaultDB")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Account__3214EC078D45E594");
+            entity.HasKey(e => e.Id).HasName("PK__Account__3214EC0751529A97");
 
             entity.ToTable("Account");
 
@@ -79,7 +80,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<Bid>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Bid__3214EC070EFA4DD6");
+            entity.HasKey(e => e.Id).HasName("PK__Bid__3214EC07006FAAA3");
 
             entity.ToTable("Bid");
 
@@ -102,7 +103,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<CarbonCredit>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CarbonCr__3214EC07BF01CA54");
+            entity.HasKey(e => e.Id).HasName("PK__CarbonCr__3214EC07170535D9");
 
             entity.ToTable("CarbonCredit");
 
@@ -124,7 +125,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<CarbonEmission>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CarbonEm__3214EC07EFCBCEF8");
+            entity.HasKey(e => e.Id).HasName("PK__CarbonEm__3214EC07E6811455");
 
             entity.ToTable("CarbonEmission");
 
@@ -148,7 +149,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<CarbonListing>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CarbonLi__3214EC07E51737D8");
+            entity.HasKey(e => e.Id).HasName("PK__CarbonLi__3214EC073388E268");
 
             entity.ToTable("CarbonListing");
 
@@ -174,7 +175,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<Certificate>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Certific__3214EC07E38F5457");
+            entity.HasKey(e => e.Id).HasName("PK__Certific__3214EC0718E08F02");
 
             entity.ToTable("Certificate");
 
@@ -201,7 +202,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<Deposit>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Deposit__3214EC070ACED230");
+            entity.HasKey(e => e.Id).HasName("PK__Deposit__3214EC07BA0976C3");
 
             entity.ToTable("Deposit");
 
@@ -221,7 +222,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<Dispute>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Dispute__3214EC07A8E35B5E");
+            entity.HasKey(e => e.Id).HasName("PK__Dispute__3214EC074AD9BAAF");
 
             entity.ToTable("Dispute");
 
@@ -243,7 +244,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<ElectricVehicle>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Electric__3214EC07DDC5DE9E");
+            entity.HasKey(e => e.Id).HasName("PK__Electric__3214EC07B2B7B710");
 
             entity.ToTable("ElectricVehicle");
 
@@ -270,7 +271,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<Transaction>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Transact__3214EC07388ECB14");
+            entity.HasKey(e => e.Id).HasName("PK__Transact__3214EC0790D6DD3E");
 
             entity.ToTable("Transaction");
 
@@ -305,7 +306,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<VehicleTelemetry>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__VehicleT__3214EC07613CF8FA");
+            entity.HasKey(e => e.Id).HasName("PK__VehicleT__3214EC072D97B8DA");
 
             entity.ToTable("VehicleTelemetry");
 
@@ -329,7 +330,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<VehicleType>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__VehicleT__3214EC07F594EF08");
+            entity.HasKey(e => e.Id).HasName("PK__VehicleT__3214EC074DE1765D");
 
             entity.ToTable("VehicleType");
 
@@ -342,7 +343,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
         modelBuilder.Entity<Wallet>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Wallet__3214EC07E4BEBBB5");
+            entity.HasKey(e => e.Id).HasName("PK__Wallet__3214EC07D5171CFD");
 
             entity.ToTable("Wallet");
 

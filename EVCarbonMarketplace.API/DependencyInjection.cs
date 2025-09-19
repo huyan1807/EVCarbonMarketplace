@@ -117,6 +117,7 @@ namespace EVCarbonMarketplace.API
             services.AddScoped<ICarbonEmissionService, CarbonEmissionService>();
             services.AddScoped<IFileReaderService, FileReaderService>();
             services.AddScoped<ICarbonCreditService, CarbonCreditService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
 
 
