@@ -20,9 +20,10 @@ services:
       dockerfile: EVCarbonMarketplace.API/Dockerfile
     container_name: carbonmarketplaceapi
     depends_on:
+      - sqlserver
       - redis
     environment:
-      ConnectionStrings__DefaultDB: "Server=sqlserver,1433;Database=EVCarbonMarketplace;User=sa;Password=Huyan@1807;TrustServerCertificate=True;"
+      ConnectionStrings__DefaultDB: "Server=sqlserver,1434;Database=EVCarbonMarketplace;User=sa;Password=Huyan@1807;TrustServerCertificate=True;"
       ConnectionStrings__Redis: "redis:6379,abortConnect=false"
       ASPNETCORE_ENVIRONMENT: Production
     ports:
