@@ -3,104 +3,58 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EVCarbonMarketplace - Nạp tiền thành công</title>
+    <title>EVCarbonMarketplace - Mã xác thực</title>
 </head>
 <body style="margin:0; padding:0; background-color:#f3f8f5; font-family:'Helvetica Neue','Arial',sans-serif;">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f3f8f5;">
         <tr>
             <td align="center" style="padding:40px 20px;">
-                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; max-width:600px; box-shadow:0 6px 20px rgba(0,0,0,0.1);">
+                <table width="600" cellpadding="0" cellspacing="0" border="0"
+                       style="background-color:#ffffff; border-radius:12px; overflow:hidden; max-width:600px; box-shadow:0 6px 20px rgba(0,0,0,0.1);">
 
-                    <!-- Green eco gradient -->
+                    <!-- Header -->
                     <tr>
-                        <td style="background:linear-gradient(90deg,#2ecc71,#27ae60); height:8px; line-height:8px;">&nbsp;</td>
+                        <td style="background:linear-gradient(90deg, #2ecc71, #27ae60); height:8px; line-height:8px;">&nbsp;</td>
                     </tr>
 
                     <!-- Logo -->
                     <tr>
-                        <td align="center" style="padding:35px 0 10px;">
+                        <td align="center" style="padding:35px 0 25px;">
                             <img src="https://firebasestorage.googleapis.com/v0/b/andemo.appspot.com/o/Images%2Flogo.jpg?alt=media&token=db9ae935-1610-4c77-a7d9-fbdedadf6f6e"
-                                 alt="EVCarbonMarketplace Logo" width="180"
+                                 alt="EVCarbonMarketplace Logo" width="160"
                                  style="display:block; border:0; border-radius:50%; box-shadow:0 2px 10px rgba(0,0,0,0.15);" />
                         </td>
                     </tr>
 
                     <!-- Tiêu đề -->
                     <tr>
-                        <td style="padding:10px 40px 0 40px; text-align:center;">
-                            <h1 style="color:#27ae60; font-size:26px; margin:0; font-weight:700;">
-                                <span style="">💳</span>
-                                <span style="">Nạp Tiền Thành Công!</span>
-                            </h1>
+                        <td style="padding:0 40px 20px 40px; text-align:center;">
+                            <h2 style="color:#27ae60; font-size:26px; margin:0; font-weight:600;">
+                                Mã Xác Thực EVCarbonMarketplace
+                            </h2>
+                            <p style="margin:10px 0 0; color:#555;">
+                                Đây là mã OTP của bạn, có hiệu lực trong <strong>5 phút</strong>:
+                            </p>
                         </td>
                     </tr>
 
-                    <!-- Lời chào -->
+                    <!-- OTP -->
                     <tr>
-                        <td style="padding:18px 40px 10px 40px; font-size:16px; line-height:1.6; text-align:center; color:#2d3436;">
-                            Xin chào <strong style="color:#27ae60;">{customerName}</strong>,<br />
-                            Giao dịch nạp tiền của bạn đã được xử lý thành công. Số dư ví của bạn đã được cập nhật.
-                        </td>
-                    </tr>
-
-                    <!-- Thông tin giao dịch -->
-                    <tr>
-                        <td style="padding:20px 40px;">
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0"
-                                   style="background-color:#eafaf1; border:2px solid #27ae60; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                                <tr>
-                                    <td style="padding:20px;">
-                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                                            <tr>
-                                                <td width="50%" style="padding:6px 0; font-size:15px; color:#2d3436;">
-                                                    <strong>Số tiền nạp:</strong> {amount} {currency}
-                                                </td>
-                                                <td width="50%" align="right" style="padding:6px 0; font-size:15px; color:#2d3436;">
-                                                    <strong>Mã giao dịch:</strong> {transactionId}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td width="50%" style="padding:6px 0; font-size:15px; color:#2d3436;">
-                                                    <strong>Thời gian:</strong> {date}
-                                                </td>
-                                                <td width="50%" align="right" style="padding:6px 0; font-size:15px; color:#2d3436;">
-                                                    <strong>Số dư mới:</strong> {newBalance} {currency}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
+                        <td align="center" style="padding:20px;">
+                            <p style="font-size:40px; font-weight:700; color:#27ae60; letter-spacing:8px; margin:0;">
+                                {otp}
+                            </p>
                         </td>
                     </tr>
 
                     <!-- Footer -->
                     <tr>
-                        <td style="padding:22px 40px 0 40px; font-size:16px; line-height:1.6; text-align:center; color:#444;">
-                            Cảm ơn bạn đã sử dụng dịch vụ của <strong style="color:#27ae60;">EVCarbonMarketplace</strong>.
+                        <td style="padding:30px 40px; text-align:center; font-size:14px; color:#666;">
+                            Nếu bạn không yêu cầu, vui lòng bỏ qua email này.<br />
+                            © 2025 EVCarbonMarketplace
                         </td>
                     </tr>
 
-                    <tr>
-                        <td style="padding:12px 40px 20px 40px; font-size:14px; line-height:1.6; text-align:center; color:#555;">
-                            Nếu bạn không thực hiện giao dịch này, vui lòng liên hệ ngay để được hỗ trợ.
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color:#f8f9fa; padding:25px 40px; text-align:center; font-size:14px; color:#666; border-top:1px solid #e0e0e0;">
-                            <p style="margin:0 0 6px;">
-                                © 2025 EVCarbonMarketplace. All rights reserved.
-                            </p>
-                            <p style="margin:0;">
-                                <a href="mailto:support@EVCarbonMarketplace.com" style="color:#27ae60; text-decoration:none;">📧 support@EVCarbonMarketplace.com</a>
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-
-                <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;">
-                    <tr><td style="height:20px; line-height:20px;">&nbsp;</td></tr>
                 </table>
             </td>
         </tr>
