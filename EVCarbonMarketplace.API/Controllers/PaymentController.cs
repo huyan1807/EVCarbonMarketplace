@@ -28,25 +28,16 @@ namespace EVCarbonMarketplace.API.Controllers
             return StatusCode(int.Parse(response.Status), response);
 
         }
-        //[HttpPost(ApiEndPointConstant.Payment.Webhook)]
-        //[ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status200OK)]
-        //[ProducesErrorResponseType(typeof(ProblemDetails))]
-        //public async Task<IActionResult> Webhook([FromBody] WebhookNotification notification)
-        //{
-        //    var response = await _paymentService.HandleWebhook(notification);
-        //    return StatusCode(int.Parse(response.Status), response);
-
-        //}
-
         [HttpPost(ApiEndPointConstant.Payment.Webhook)]
-        [AllowAnonymous]
-        public async Task<IActionResult> Webhook()
+        [ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> Webhook([FromBody] WebhookNotification notification)
         {
-            using var reader = new StreamReader(Request.Body);
-            var body = await reader.ReadToEndAsync();
-            Console.WriteLine("Webhook received: " + body);
+            var response = await _paymentService.HandleWebhook(notification);
+            return StatusCode(int.Parse(response.Status), response);
 
-            return Ok(new { status = 200, message = "Webhook nhận thành công" });
         }
+
+
     }
 }
