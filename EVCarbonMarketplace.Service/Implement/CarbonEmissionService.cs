@@ -213,6 +213,12 @@ namespace EVCarbonMarketplace.Service.Implement
                     Data = null
                 };
             }
+            //check xem xe đã có phát thải chưa
+            var existingEmission = await _unitOfWork.GetRepository<CarbonEmission>()
+                .SingleOrDefaultAsync(predicate: x => x.ElectricVehicleId == Id && x.IsActive == true);
+            if (existingEmission != null)
+                throw new BadHttpRequestException("Xe đã có phát thải, không thể nhập dữ liệu mới");
+
 
             decimal totalDistance = records.Sum(r => r.DistanceTravelled);
             decimal totalEnergy = records.Sum(r => r.EnergyConsumed);

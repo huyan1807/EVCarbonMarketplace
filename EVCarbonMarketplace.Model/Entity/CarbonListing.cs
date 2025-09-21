@@ -13,8 +13,6 @@ public partial class CarbonListing
 
     public decimal? Price { get; set; }
 
-    public decimal? Quantity { get; set; }
-
     public string? Type { get; set; }
 
     public string? Status { get; set; }

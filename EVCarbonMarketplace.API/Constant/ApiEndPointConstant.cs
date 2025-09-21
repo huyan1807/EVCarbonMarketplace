@@ -99,5 +99,18 @@
             public const string GetMyWallet = WalletEndPoint + "/my-wallet";
         }
 
+        public static class CarbonListing
+        {
+            public const string CarbonListingEndPoint = ApiEndpoint + "/carbon-listing";
+            public const string CreateSellListing = CarbonListingEndPoint + "/sell";
+            public const string CreateBuyListing = CarbonListingEndPoint + "/buy";
+            public const string GetAll = CarbonListingEndPoint;
+            public const string GetById = CarbonListingEndPoint + "/{id}";
+            public const string GetMyListings = CarbonListingEndPoint + "/my-listings";
+            public const string Delete = CarbonListingEndPoint + "/{id}";
+            public const string Update = CarbonListingEndPoint + "/{id}";
+
+        }
+
     }
 }
