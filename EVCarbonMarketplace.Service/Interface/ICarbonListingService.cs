@@ -13,7 +13,7 @@ namespace EVCarbonMarketplace.Service.Interface
 {
     public interface ICarbonListingService
     {
-        Task<BaseResponse<CarbonListingResponse>> Create(CarbonListingRequest request, CarbonListingEnum.ListingType type);
+        Task<BaseResponse<CarbonListingResponse>> Create(CarbonListingRequest request, CarbonListingEnum.ListingType? type);
 
         Task<BaseResponse<IPaginate<CarbonListingManagerResponse>>> GetAll(int page, int size, CarbonListingEnum.ListingType? type, CarbonListingEnum.ListingStatus? status);
         Task<BaseResponse<bool>> Delete(Guid id);

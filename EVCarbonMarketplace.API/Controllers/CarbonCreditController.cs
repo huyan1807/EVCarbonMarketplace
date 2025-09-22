@@ -22,7 +22,7 @@ namespace EVCarbonMarketplace.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonCreditResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<CarbonCreditResponse>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetMyCredits([FromQuery] CarbonCreditEnum status)
+        public async Task<IActionResult> GetMyCredits([FromQuery] CarbonCreditEnum? status = null)
         {
             var response = await _carbonCreditService.GetMyCredits(status);
             return StatusCode(StatusCodes.Status200OK, response);
@@ -32,9 +32,18 @@ namespace EVCarbonMarketplace.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonCreditManageResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<CarbonCreditManageResponse>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetAll([FromQuery] CarbonCreditEnum status, [FromQuery] int page = 1, [FromQuery] int size = 10)
+        public async Task<IActionResult> GetAll([FromQuery] CarbonCreditEnum? status = null, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             var response = await _carbonCreditService.GetAllCredits(page, size,status);
+            return StatusCode(StatusCodes.Status200OK, response);
+        }
+        [HttpGet(ApiEndPointConstant.CarbonCredits.GetDetail)]
+        [ProducesResponseType(typeof(BaseResponse<CarbonCreditResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<CarbonCreditResponse>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetDetail([FromRoute] Guid id)
+        {
+            var response = await _carbonCreditService.GetCreditDetail(id);
             return StatusCode(StatusCodes.Status200OK, response);
         }
 

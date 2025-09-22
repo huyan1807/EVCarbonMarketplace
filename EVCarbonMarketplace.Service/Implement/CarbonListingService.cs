@@ -27,17 +27,30 @@ namespace EVCarbonMarketplace.Service.Implement
         {
         }
 
-        public  async Task<BaseResponse<CarbonListingResponse>> Create(CarbonListingRequest request, CarbonListingEnum.ListingType type)
+        public  async Task<BaseResponse<CarbonListingResponse>> Create(CarbonListingRequest request, CarbonListingEnum.ListingType? type)
         {
             var accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                 predicate: x => x.Id == accountId && x.IsActive == true
                 ) ?? throw new NotFoundException("Không tìm thấy tài khoản");
-
+            if (type == null) throw new BadHttpRequestException("Loại giao dịch không hợp lệ");
+            var carbonCredit = await _unitOfWork.GetRepository<CarbonCredit>().SingleOrDefaultAsync(
+                   predicate: x => x.Id == request.CarbonCreditId && x.IsActive == true
+               ) ?? throw new NotFoundException("Không tìm thấy tín chỉ");
             var Creditlisting = await _unitOfWork.GetRepository<CarbonListing>().SingleOrDefaultAsync(
-                predicate: x => x.CarbonCreditId == request.CarbonCreditId && x.IsActive == true 
-                ) ?? throw new NotFoundException("Tín chỉ carbon đã được đăng bán");
-
+                predicate: x => x.CarbonCreditId == request.CarbonCreditId && x.IsActive == true
+                );
+            if (Creditlisting != null) throw new BadHttpRequestException("Tín chỉ đã được đăng bán");
+            var sellerWallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
+                predicate: x => x.AccountId == accountId && x.IsActive == true
+            ) ?? throw new NotFoundException("Không tìm thấy ví");
+            if (sellerWallet.CarbonUnit < (carbonCredit.Credits.Value))
+            {
+                throw new BadHttpRequestException("Bạn không đủ tín chỉ để đăng bán.");
+            }
+            sellerWallet.CarbonUnit -= carbonCredit.Credits;
+            sellerWallet.UpdateAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<Wallet>().UpdateAsync(sellerWallet);
             var CarbonLT = _mapper.Map<CarbonListing>(request);
             CarbonLT.AccountId = accountId;
             CarbonLT.Type = type.ToString();
@@ -84,7 +97,6 @@ namespace EVCarbonMarketplace.Service.Implement
         public async Task<BaseResponse<IPaginate<CarbonListingManagerResponse>>> GetAll(int page, int size, CarbonListingEnum.ListingType? type, CarbonListingEnum.ListingStatus? status)
         {
             if (page <= 0 || size <= 0) throw new BadHttpRequestException("Trang và kích thước trang phải lớn hơn 0");
-
             var CreditListing = await _unitOfWork.GetRepository<CarbonListing>().GetPagingListAsync(
                 
                 selector: x => new CarbonListingManagerResponse
@@ -105,7 +117,9 @@ namespace EVCarbonMarketplace.Service.Implement
                     VehicleImage = x.CarbonCredit.CarbonEmission.ElectricVehicle.ImageUrl
                 },
 
-                predicate: x => x.IsActive == true && (type ==null || x.Type == type.ToString()) && (status == null || x.Status == status.ToString()),
+                predicate: x => x.IsActive == true
+                && ((type == null || x.Type.ToLower() == type.ToString().ToLower())
+                && (status == null || x.Status.ToLower() == status.ToString().ToLower())),
                 include: source => source.Include(x => x.Account).Include(x => x.CarbonCredit).ThenInclude(x => x.CarbonEmission).ThenInclude(x => x.ElectricVehicle),
                 page: page,
                 size: size

@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EVCarbonMarketplace.Model.Payload.Response
+namespace EVCarbonMarketplace.Model.Enum
 {
-    public class VehicleTelemetryResponse
+    public enum BidEnum
     {
-
+        Pending,
+        Winner,
+        Loser,
+        Cancelled
     }
 }

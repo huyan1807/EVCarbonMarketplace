@@ -11,6 +11,7 @@ using EVCarbonMarketplace.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace EVCarbonMarketplace.Service.Implement
 
         }
 
-        public async Task<BaseResponse<IPaginate<CarbonCreditManageResponse>>> GetAllCredits(int page, int size , CarbonCreditEnum status)
+        public async Task<BaseResponse<IPaginate<CarbonCreditManageResponse>>> GetAllCredits(int page, int size , CarbonCreditEnum? status)
         {
             var credits = await _unitOfWork.GetRepository<CarbonCredit>().GetPagingListAsync(
 
@@ -65,7 +66,40 @@ namespace EVCarbonMarketplace.Service.Implement
 
         }
 
-        public async Task<BaseResponse<IPaginate<CarbonCreditResponse>>> GetMyCredits(CarbonCreditEnum status)
+        public async Task<BaseResponse<CarbonCreditResponse>> GetCreditDetail(Guid id)
+        {
+            var credit = await _unitOfWork.GetRepository<CarbonCredit>().SingleOrDefaultAsync(
+                        selector: s => new CarbonCreditResponse
+                        {
+                            Id = s.Id,
+                            CarbonEmissionId = s.CarbonEmissionId,
+                            Credits = s.Credits,
+                            Status = s.Status.ToString(),
+                            CreateAt = s.CreateAt,
+                            BatteryCapacity = s.CarbonEmission.ElectricVehicle.BatteryCapacity,
+                            Brand = s.CarbonEmission.ElectricVehicle.Brand,
+                            VehicleModel = s.CarbonEmission.ElectricVehicle.VehicleModel,
+                            LicensePlate = s.CarbonEmission.ElectricVehicle.LicensePlate,
+                            ElectricVehicleId = s.CarbonEmission.ElectricVehicleId,
+                            PeriodStart = s.CarbonEmission.PeriodStart,
+                            PeriodEnd = s.CarbonEmission.PeriodEnd,
+                            Co2Reduced = s.CarbonEmission.Co2reduced
+                        },
+                        predicate: x => x.Id == id && x.IsActive == true,   // chỉ lấy theo Id
+                        include: x => x.Include(c => c.CarbonEmission)
+                                       .ThenInclude(e => e.ElectricVehicle)
+                    );
+            if (credit == null) throw new NotFoundException("Không tìm thấy tín chỉ carbon");
+
+            return new BaseResponse<CarbonCreditResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy chi tiết tín chỉ carbon thành công",
+                Data = credit 
+            };
+        }
+
+        public async Task<BaseResponse<IPaginate<CarbonCreditResponse>>> GetMyCredits(CarbonCreditEnum? status)
         {
             var accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(

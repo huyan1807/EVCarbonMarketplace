@@ -78,6 +78,7 @@
             public const string CarbonCredit = ApiEndpoint + "/carbon-credit";
             public const string GetMyCredits = CarbonCredit + "/my-credits";
             public const string GetAll = CarbonCredit;
+            public const string GetDetail = CarbonCredit + "/{id}";
         }
 
         public static class Payment
@@ -110,6 +111,27 @@
             public const string Delete = CarbonListingEndPoint + "/{id}";
             public const string Update = CarbonListingEndPoint + "/{id}";
 
+        }
+        public static class Transaction
+        {
+            public const string TransactionEndPoint = ApiEndpoint + "/transaction";
+            public const string Purchase = TransactionEndPoint + "/purchase/{listingId}";
+            public const string GetMyTransactions = TransactionEndPoint + "/my-transactions";
+            public const string GetAll = TransactionEndPoint;
+        }
+
+        public static class Bid
+        {
+            public const string BidEndPoint = ApiEndpoint + "/bid";
+            public const string PlaceBid = BidEndPoint + "/placeBid";
+            public const string FinalizeAuction = BidEndPoint + "/finalize-auction";
+            public const string GetCurrentBid = BidEndPoint + "/current-bid";
+        }
+        public static class VehicleTelemetry
+        {
+            public const string VehicleTelemetryEndPoint = ApiEndpoint + "/vehicle-telemetry";
+            public const string LogTelemetry = VehicleTelemetryEndPoint;
+            public const string GetByEVehicle = VehicleTelemetryEndPoint + "/by-EVehicle/{id}";
         }
 
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EVCarbonMarketplace.Model.Payload.Response
+namespace EVCarbonMarketplace.Model.Payload.Response.Wallet
 {
     public class WalletResponse
     {

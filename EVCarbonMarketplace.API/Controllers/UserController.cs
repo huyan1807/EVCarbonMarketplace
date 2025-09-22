@@ -34,7 +34,7 @@ namespace EVCarbonMarketplace.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<IPaginate<GetUserResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<GetUserResponse>>), StatusCodes.Status400BadRequest)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetAllUsers([FromQuery] RoleEnum role ,[FromQuery] int page = 1, [FromQuery] int size = 10)
+        public async Task<IActionResult> GetAllUsers([FromQuery] RoleEnum? role = null ,[FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             var response = await _userService.GetAllUsers(page, size,role);
             return StatusCode(int.Parse(response.Status), response);

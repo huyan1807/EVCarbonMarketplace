@@ -25,7 +25,7 @@ namespace EVCarbonMarketplace.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<CarbonListingResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<CarbonListingResponse>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> CreateSellListing([FromBody] CarbonListingRequest request , [FromQuery] CarbonListingEnum.ListingType type)
+        public async Task<IActionResult> CreateSellListing([FromBody] CarbonListingRequest request , [FromQuery] CarbonListingEnum.ListingType? type = null)
         {
             var response = await _carbonListingService.Create(request, type);
             return StatusCode(StatusCodes.Status200OK, response);
@@ -35,7 +35,7 @@ namespace EVCarbonMarketplace.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonListingManagerResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonListingManagerResponse>>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetAll([FromQuery] CarbonListingEnum.ListingType type, [FromQuery] CarbonListingEnum.ListingStatus status ,[FromQuery] int page = 1, [FromQuery] int size = 10)
+        public async Task<IActionResult> GetAll([FromQuery] CarbonListingEnum.ListingType? type =null , [FromQuery] CarbonListingEnum.ListingStatus? status = null ,[FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             var response = await _carbonListingService.GetAll(page, size, type, status);
             return StatusCode(StatusCodes.Status200OK, response);
@@ -79,6 +79,8 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _carbonListingService.Update(id, request);
             return StatusCode(StatusCodes.Status200OK, response);
         }
+
+
 
 
 

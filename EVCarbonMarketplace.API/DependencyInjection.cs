@@ -121,6 +121,10 @@ namespace EVCarbonMarketplace.API
             services.AddScoped<IVehicleTypeService, VehicleTypeService>();
             services.AddScoped<IWalletService, WalletService>();
             services.AddScoped<ICarbonListingService, CarbonListingService>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IBidService, BidService>();
+            services.AddScoped<IVehicleTelemetryService, VehicleTelemetryService>();
+
 
 
 

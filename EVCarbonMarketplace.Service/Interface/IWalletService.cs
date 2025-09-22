@@ -1,4 +1,5 @@
 ﻿using EVCarbonMarketplace.Model.Payload.Response;
+using EVCarbonMarketplace.Model.Payload.Response.Wallet;
 using System;
 using System.Collections.Generic;
 using System.Linq;

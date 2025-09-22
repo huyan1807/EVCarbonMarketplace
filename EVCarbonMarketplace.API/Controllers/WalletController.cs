@@ -1,5 +1,6 @@
 ﻿using EVCarbonMarketplace.API.Constant;
 using EVCarbonMarketplace.Model.Payload.Response;
+using EVCarbonMarketplace.Model.Payload.Response.Wallet;
 using EVCarbonMarketplace.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -156,7 +156,7 @@ namespace EVCarbonMarketplace.Service.Implement
             return account != null;
         }
 
-        public async Task<BaseResponse<IPaginate<GetUserResponse>>> GetAllUsers(int page, int size, RoleEnum role)
+        public async Task<BaseResponse<IPaginate<GetUserResponse>>> GetAllUsers(int page, int size, RoleEnum? role)
         {
             if (page < 1 || size < 1)
             {

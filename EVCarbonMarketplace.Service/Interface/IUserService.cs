@@ -20,7 +20,7 @@ namespace EVCarbonMarketplace.Service.Interface
         Task<BaseResponse<GetUserResponse>> CreateNewUserAccountByGoogle(GoogleAuthResponse googleAuthResponse);
 
         Task<BaseResponse<AuthenticateResponse>> CreateTokenByEmail(string email);
-        Task<BaseResponse<IPaginate<GetUserResponse>>> GetAllUsers(int page, int size , RoleEnum role);
+        Task<BaseResponse<IPaginate<GetUserResponse>>> GetAllUsers(int page, int size , RoleEnum? role);
 
         Task<BaseResponse<GetUserResponse>> GetUserProfile();
 

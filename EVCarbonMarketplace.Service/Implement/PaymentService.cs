@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EVCarbonMarketplace.Model.Enum;
 
 namespace EVCarbonMarketplace.Service.Implement
 {
@@ -164,7 +165,7 @@ namespace EVCarbonMarketplace.Service.Implement
                         Id = Guid.NewGuid(),
                         WalletId = wallet.Id,
                         DepositId = deposit.Id,
-                        Type = "Nạp Tiền",
+                        Type =TransactionEnum.Deposit.ToString(),
                         Description = "Nạp tiền vào ví",
                         Status = "Success",
                         Amount = amount,

@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EVCarbonMarketplace.Model.Exceptions;
+using EVCarbonMarketplace.Model.Payload.Response.Wallet;
 
 namespace EVCarbonMarketplace.Service.Implement
 {

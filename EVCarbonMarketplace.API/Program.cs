@@ -2,6 +2,7 @@ using EVCarbonMarketplace.API;
 using EVCarbonMarketplace.API.Constant;
 using EVCarbonMarketplace.API.Middlewares;
 using EVCarbonMarketplace.Model.Payload.Settings;
+using EVCarbonMarketplace.Service.Implement;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -45,6 +46,8 @@ builder.Services.AddHttpClientServices();
 builder.Services.AddCloudinary(builder.Configuration);
 builder.Services.AddRedis(builder.Configuration);
 builder.Services.Configure<PayOSSettings>(builder.Configuration.GetSection("PayOS"));
+builder.Services.AddHostedService<AuctionBackgroundService>();
+
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
