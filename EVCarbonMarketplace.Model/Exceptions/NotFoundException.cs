@@ -16,5 +16,6 @@ namespace EVCarbonMarketplace.Model.Exceptions
         public NotFoundException(string message) : base(message)
         {
         }
+
     }
 }

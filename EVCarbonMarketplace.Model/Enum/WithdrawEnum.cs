@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace EVCarbonMarketplace.Model.Enum
 {
-    public enum TransactionStatusEnum
+    public enum WithdrawEnum
     {
-        Success,
-        Fail,
-        Hold,
-        Pending
+        Pending,
+        Approved,
+        Rejected
     }
 }

@@ -33,6 +33,8 @@ public partial class Account
 
     public DateTime? DeleteAt { get; set; }
 
+    public virtual ICollection<BankAccount> BankAccounts { get; set; } = new List<BankAccount>();
+
     public virtual ICollection<Bid> Bids { get; set; } = new List<Bid>();
 
     public virtual ICollection<CarbonCredit> CarbonCredits { get; set; } = new List<CarbonCredit>();
@@ -54,4 +56,6 @@ public partial class Account
     public virtual ICollection<Transaction> TransactionSellers { get; set; } = new List<Transaction>();
 
     public virtual ICollection<Wallet> Wallets { get; set; } = new List<Wallet>();
+
+    public virtual ICollection<Withdraw> Withdraws { get; set; } = new List<Withdraw>();
 }

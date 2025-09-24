@@ -33,6 +33,8 @@ public partial class Transaction
 
     public string? Description { get; set; }
 
+    public Guid? WithdrawId { get; set; }
+
     public virtual Account? Buyer { get; set; }
 
     public virtual CarbonListing? CarbonListing { get; set; }
@@ -44,4 +46,6 @@ public partial class Transaction
     public virtual Account? Seller { get; set; }
 
     public virtual Wallet? Wallet { get; set; }
+
+    public virtual Withdraw? Withdraw { get; set; }
 }

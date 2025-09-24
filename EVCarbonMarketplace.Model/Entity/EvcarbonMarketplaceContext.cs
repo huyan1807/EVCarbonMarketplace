@@ -18,6 +18,8 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
     public virtual DbSet<Account> Accounts { get; set; }
 
+    public virtual DbSet<BankAccount> BankAccounts { get; set; }
+
     public virtual DbSet<Bid> Bids { get; set; }
 
     public virtual DbSet<CarbonCredit> CarbonCredits { get; set; }
@@ -42,6 +44,8 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
     public virtual DbSet<Wallet> Wallets { get; set; }
 
+    public virtual DbSet<Withdraw> Withdraws { get; set; }
+
     public static string GetConnectionString(string connectionStringName)
     {
         var config = new ConfigurationBuilder()
@@ -55,6 +59,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer(GetConnectionString("DefaultDB")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
@@ -74,6 +79,27 @@ public partial class EvcarbonMarketplaceContext : DbContext
             entity.Property(e => e.Role).HasMaxLength(15);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
             entity.Property(e => e.Username).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<BankAccount>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__BankAcco__3214EC076CC9746C");
+
+            entity.ToTable("BankAccount");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.BankAccountHolder).HasMaxLength(150);
+            entity.Property(e => e.BankAccountNumber).HasMaxLength(50);
+            entity.Property(e => e.BankCode).HasMaxLength(20);
+            entity.Property(e => e.BankName).HasMaxLength(150);
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.LogoUrl).HasMaxLength(255);
+            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.BankAccounts)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_BankAccount_Account");
         });
 
         modelBuilder.Entity<Bid>(entity =>
@@ -299,6 +325,10 @@ public partial class EvcarbonMarketplaceContext : DbContext
             entity.HasOne(d => d.Wallet).WithMany(p => p.Transactions)
                 .HasForeignKey(d => d.WalletId)
                 .HasConstraintName("FK_Transaction_WalletId");
+
+            entity.HasOne(d => d.Withdraw).WithMany(p => p.Transactions)
+                .HasForeignKey(d => d.WithdrawId)
+                .HasConstraintName("FK_Transaction_Withdraw");
         });
 
         modelBuilder.Entity<VehicleTelemetry>(entity =>
@@ -354,6 +384,29 @@ public partial class EvcarbonMarketplaceContext : DbContext
             entity.HasOne(d => d.Account).WithMany(p => p.Wallets)
                 .HasForeignKey(d => d.AccountId)
                 .HasConstraintName("FK_Wallet_AccountId");
+        });
+
+        modelBuilder.Entity<Withdraw>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Withdraw__3214EC07C517E283");
+
+            entity.ToTable("Withdraw");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(20);
+            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.Withdraws)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Withdraw_Account");
+
+            entity.HasOne(d => d.BankAccount).WithMany(p => p.Withdraws)
+                .HasForeignKey(d => d.BankAccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Withdraw_BankAccount");
         });
 
         OnModelCreatingPartial(modelBuilder);

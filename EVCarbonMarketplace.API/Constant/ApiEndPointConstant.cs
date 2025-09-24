@@ -133,6 +133,22 @@
             public const string LogTelemetry = VehicleTelemetryEndPoint;
             public const string GetByEVehicle = VehicleTelemetryEndPoint + "/by-EVehicle/{id}";
         }
-
+        
+        public static class BankAccount
+        {
+            public const string BankAccountEndPoint = ApiEndpoint + "/bank-account";
+            public const string Create = BankAccountEndPoint;
+            public const string GetMyBankAccounts = BankAccountEndPoint + "/my-bank-accounts";
+            public const string Delete = BankAccountEndPoint + "/{id}";
+            public const string SetDefault = BankAccountEndPoint + "/{id}/set-default";
+            public const string GetDefault = BankAccountEndPoint + "/default";
+        }
+        public static class Withdraw
+        {
+            public const string WithdrawEndPoint = ApiEndpoint + "/withdraw";
+            public const string Create = WithdrawEndPoint;
+            public const string GetMyWithdraws = WithdrawEndPoint + "/my-withdraws";
+            public const string UpdateStatus = WithdrawEndPoint + "/status";
+        }
     }
 }

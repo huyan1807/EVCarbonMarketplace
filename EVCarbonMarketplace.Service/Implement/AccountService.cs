@@ -53,6 +53,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 throw new BadHttpRequestException("Email đã tồn tại");
             if (accounts.Any(a => a.Phone.Equals(request.Phone)))
                 throw new BadHttpRequestException("Số điện thoại đã tồn tại");
+            if(request.AvatarUrl == null) throw new BadHttpRequestException("Ảnh đại diện không được để trống");
             var redisDb = _redis.GetDatabase();
             if (redisDb == null) throw new RedisServerException("Không thể kết nối tới Redis");
 
