@@ -25,6 +25,8 @@ public partial class Dispute
 
     public DateTime? DeleteAt { get; set; }
 
+    public string? EvidenceUrl { get; set; }
+
     public virtual Account? SendAccount { get; set; }
 
     public virtual Transaction? Transaction { get; set; }

@@ -150,5 +150,17 @@
             public const string GetMyWithdraws = WithdrawEndPoint + "/my-withdraws";
             public const string UpdateStatus = WithdrawEndPoint + "/status";
         }
+
+        public static class Dispute
+        {
+            public const string DisputeEndPoint = ApiEndpoint + "/dispute";
+            public const string GetDisputeTypes = DisputeEndPoint + "/types";
+            public const string Create = DisputeEndPoint;
+            public const string GetMyDisputes = DisputeEndPoint + "/my-disputes";
+            public const string GetAll = DisputeEndPoint;
+            public const string GetById = DisputeEndPoint + "/{id}";
+            public const string UpdateStatus = DisputeEndPoint + "/status";
+            public const string Delete = DisputeEndPoint + "/{id}";
+        }
     }
 }
