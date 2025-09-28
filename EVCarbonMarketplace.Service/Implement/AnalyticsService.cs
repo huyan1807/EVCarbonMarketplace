@@ -43,11 +43,34 @@ namespace EVCarbonMarketplace.Service.Implement
                     .Where(t => t.Type == TransactionEnum.Purchase.ToString())
                     .ToList();
 
-                // Auction: chỉ lấy Winner (bid cuối cùng mỗi listing)
+                // Auction: gom theo listing, chỉ lấy Winner với tổng amount
                 var auctionTransactions = transactions
                     .Where(t => t.Type == TransactionEnum.Auction.ToString())
                     .GroupBy(t => t.CarbonListingId)
-                    .Select(g => g.OrderByDescending(t => t.CreateAt).First())
+                    .Select(g =>
+                    {
+                        var winner = g.OrderByDescending(x => x.CreateAt).First(); // bid cuối cùng => biết WinnerId
+                        var winnerId = winner.BuyerId;
+
+                        // Tổng tất cả bid của Winner trong phiên này
+                        var totalWinnerAmount = g
+                            .Where(x => x.BuyerId == winnerId)
+                            .Sum(x => x.Amount ?? 0);
+
+                        return new Transaction
+                        {
+                            Id = winner.Id,
+                            BuyerId = winner.BuyerId,
+                            SellerId = winner.SellerId,
+                            CarbonListingId = winner.CarbonListingId,
+                            Amount = totalWinnerAmount,
+                            FeeRate = winner.FeeRate,
+                            CreateAt = winner.CreateAt,
+                            Type = winner.Type,
+                            Status = winner.Status,
+                            IsActive = winner.IsActive
+                        };
+                    })
                     .ToList();
 
                 // 3. Danh sách hợp lệ để tính doanh thu
