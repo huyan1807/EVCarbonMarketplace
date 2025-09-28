@@ -31,52 +31,111 @@ namespace EVCarbonMarketplace.Service.Implement
 
         public async Task<BaseResponse<FinanceStatsResponse>> GetFinanceStats()
         {
-            var transactions = await _unitOfWork.GetRepository<Transaction>().GetListAsync(
-                predicate: t => t.IsActive == true && t.Status == "Success"
-            );
+            try
+            {
+                // 1. Lấy tất cả transaction success
+                var transactions = await _unitOfWork.GetRepository<Transaction>().GetListAsync(
+                    predicate: t => t.IsActive == true && t.Status == "Success"
+                );
 
-            var totalDeposit = transactions
-                .Where(t => t.Type == TransactionEnum.Deposit.ToString())
-                .Sum(t => t.Amount) ?? 0;
+                // 2. Phân loại
+                var purchaseTransactions = transactions
+                    .Where(t => t.Type == TransactionEnum.Purchase.ToString())
+                    .ToList();
 
-            var totalWithdraw = transactions
-                .Where(t => t.Type == TransactionEnum.Withdraw.ToString())
-                .Sum(t => t.Amount) ?? 0;
+                // Auction: chỉ lấy Winner (bid cuối cùng mỗi listing)
+                var auctionTransactions = transactions
+                    .Where(t => t.Type == TransactionEnum.Auction.ToString())
+                    .GroupBy(t => t.CarbonListingId)
+                    .Select(g => g.OrderByDescending(t => t.CreateAt).First())
+                    .ToList();
 
-            var totalRevenue = transactions
-                .Where(t => t.Type == TransactionEnum.Purchase.ToString() ||
-                            t.Type == TransactionEnum.Auction.ToString())
-                .Sum(t => (t.Amount ?? 0) * (t.FeeRate ?? 0) / 100);
+                // 3. Danh sách hợp lệ để tính doanh thu
+                var validTransactions = purchaseTransactions.Concat(auctionTransactions).ToList();
 
-            var byDate = transactions
-                .GroupBy(t => t.CreateAt.Value.Date)
-                .Select(g => new FinanceDailyStats
+                // 4. Tổng Deposit / Withdraw
+                var totalDeposit = transactions
+                    .Where(t => t.Type == TransactionEnum.Deposit.ToString())
+                    .Sum(t => t.Amount) ?? 0;
+
+                var totalWithdraw = transactions
+                    .Where(t => t.Type == TransactionEnum.Withdraw.ToString())
+                    .Sum(t => t.Amount) ?? 0;
+
+                // 5. Tổng doanh thu
+                var totalRevenue = validTransactions
+                    .Sum(t => (t.Amount ?? 0) * (t.FeeRate ?? 0) / 100);
+
+                // 6. Thống kê theo ngày
+                // Lấy tất cả ngày có Deposit / Withdraw hoặc Revenue
+                var depositWithdrawDates = transactions
+                    .Where(x => x.CreateAt.HasValue &&
+                                (x.Type == TransactionEnum.Deposit.ToString() ||
+                                 x.Type == TransactionEnum.Withdraw.ToString()))
+                    .Select(x => x.CreateAt.Value.Date);
+
+                var revenueDates = validTransactions
+                    .Where(x => x.CreateAt.HasValue)
+                    .Select(x => x.CreateAt.Value.Date);
+
+                var allDates = depositWithdrawDates
+                    .Union(revenueDates)
+                    .Distinct()
+                    .OrderBy(d => d)
+                    .ToList();
+
+                var byDate = allDates
+                    .Select(d => new FinanceDailyStats
+                    {
+                        Date = d,
+                        Deposit = transactions
+                            .Where(x => x.Type == TransactionEnum.Deposit.ToString()
+                                        && x.CreateAt.HasValue
+                                        && x.CreateAt.Value.Date == d)
+                            .Sum(x => x.Amount) ?? 0,
+
+                        Withdraw = transactions
+                            .Where(x => x.Type == TransactionEnum.Withdraw.ToString()
+                                        && x.CreateAt.HasValue
+                                        && x.CreateAt.Value.Date == d)
+                            .Sum(x => x.Amount) ?? 0,
+
+                        Revenue = validTransactions
+                            .Where(x => x.CreateAt.HasValue
+                                        && x.CreateAt.Value.Date == d)
+                            .Sum(x => (x.Amount ?? 0) * (x.FeeRate ?? 0) / 100)
+                    })
+                    .ToList();
+
+                // 7. Trả response
+                var response = new FinanceStatsResponse
                 {
-                    Date = g.Key,
-                    Deposit = g.Where(x => x.Type == TransactionEnum.Deposit.ToString()).Sum(x => x.Amount) ?? 0,
-                    Withdraw = g.Where(x => x.Type == TransactionEnum.Withdraw.ToString()).Sum(x => x.Amount) ?? 0,
-                    Revenue = g.Where(x => x.Type == TransactionEnum.Purchase.ToString() ||
-                                           x.Type == TransactionEnum.Auction.ToString())
-                               .Sum(x => (x.Amount ?? 0) * (x.FeeRate ?? 0) / 100)
-                })
-                .OrderBy(x => x.Date)
-                .ToList();
+                    TotalDeposit = totalDeposit,
+                    TotalWithdraw = totalWithdraw,
+                    TotalRevenue = totalRevenue,
+                    ByDate = byDate
+                };
 
-            var response = new FinanceStatsResponse
+                return new BaseResponse<FinanceStatsResponse>
+                {
+                    Status = StatusCodes.Status200OK.ToString(),
+                    Message = "Lấy thống kê tài chính thành công",
+                    Data = response
+                };
+            }
+            catch (Exception ex)
             {
-                TotalDeposit = totalDeposit,
-                TotalWithdraw = totalWithdraw,
-                TotalRevenue = totalRevenue,
-                ByDate = byDate
-            };
+                _logger.LogError(ex, "[Analytics] Lỗi khi thống kê tài chính");
 
-            return new BaseResponse<FinanceStatsResponse>
-            {
-                Status = StatusCodes.Status200OK.ToString(),
-                Message = "Lấy thống kê tài chính thành công",
-                Data = response
-            };
+                return new BaseResponse<FinanceStatsResponse>
+                {
+                    Status = StatusCodes.Status500InternalServerError.ToString(),
+                    Message = "Đã xảy ra lỗi khi xử lý dữ liệu",
+                    Data = null
+                };
+            }
         }
+
 
         public async Task<BaseResponse<string>> GetRealtimeUsers()
         {
@@ -185,11 +244,37 @@ namespace EVCarbonMarketplace.Service.Implement
                     .Where(t => t.Type == TransactionEnum.Purchase.ToString())
                     .ToList();
 
-                // Auction: chỉ tính Winner (mỗi Listing 1 lần)
+                // Auction: gom theo listing, chỉ lấy Winner với tổng amount
                 var auctionTransactions = allTransactions
                     .Where(t => t.Type == TransactionEnum.Auction.ToString())
                     .GroupBy(t => t.CarbonListingId)
-                    .Select(g => g.OrderByDescending(t => t.CreateAt).First()) // lấy bid cuối cùng
+                    .Select(g =>
+                    {
+                        var winner = g.OrderByDescending(x => x.CreateAt).First();
+                        var winnerId = winner.BuyerId;
+
+                        // Tổng tất cả bid của Winner trong listing này
+                        var totalWinnerAmount = g
+                            .Where(x => x.BuyerId == winnerId)
+                            .Sum(x => x.Amount ?? 0);
+
+                        // Tạo transaction đại diện cho phiên đấu giá
+                        var finalTransaction = new Transaction
+                        {
+                            Id = winner.Id,
+                            BuyerId = winner.BuyerId,
+                            SellerId = winner.SellerId,
+                            CarbonListingId = winner.CarbonListingId,
+                            CarbonListing = winner.CarbonListing,
+                            Amount = totalWinnerAmount,
+                            FeeRate = winner.FeeRate,
+                            CreateAt = winner.CreateAt,
+                            Type = winner.Type,
+                            Status = winner.Status,
+                            IsActive = winner.IsActive
+                        };
+                        return finalTransaction;
+                    })
                     .ToList();
 
                 // 4. Danh sách hợp lệ để tính thống kê
