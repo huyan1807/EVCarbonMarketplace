@@ -35,6 +35,8 @@ public partial class Transaction
 
     public Guid? WithdrawId { get; set; }
 
+    public decimal? FeeRate { get; set; }
+
     public virtual Account? Buyer { get; set; }
 
     public virtual CarbonListing? CarbonListing { get; set; }

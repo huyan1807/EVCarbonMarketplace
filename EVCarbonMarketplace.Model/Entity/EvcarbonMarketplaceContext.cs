@@ -36,6 +36,8 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
     public virtual DbSet<ElectricVehicle> ElectricVehicles { get; set; }
 
+    public virtual DbSet<SystemSetting> SystemSettings { get; set; }
+
     public virtual DbSet<Transaction> Transactions { get; set; }
 
     public virtual DbSet<VehicleTelemetry> VehicleTelemetries { get; set; }
@@ -291,6 +293,17 @@ public partial class EvcarbonMarketplaceContext : DbContext
                 .HasConstraintName("FK_ElectricVehicle_VehicleTypeId");
         });
 
+        modelBuilder.Entity<SystemSetting>(entity =>
+        {
+            entity.HasIndex(e => e.Key, "UQ_SystemSettings_Key").IsUnique();
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.Key).HasMaxLength(100);
+            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+            entity.Property(e => e.Value).HasMaxLength(255);
+        });
+
         modelBuilder.Entity<Transaction>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Transact__3214EC0790D6DD3E");
@@ -301,6 +314,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
             entity.Property(e => e.Amount).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
+            entity.Property(e => e.FeeRate).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.Type).HasMaxLength(50);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");

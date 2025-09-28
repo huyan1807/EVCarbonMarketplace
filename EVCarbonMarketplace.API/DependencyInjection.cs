@@ -127,6 +127,9 @@ namespace EVCarbonMarketplace.API
             services.AddScoped<IBankAccountService, BankAccountService>();
             services.AddScoped<IWithdrawService, WithdrawService>();
             services.AddScoped<IDisputeService, DisputeService>();
+            services.AddScoped<IAnalyticsService, AnalyticsService>();
+            services.AddScoped<ISystemSettingService, SystemSettingService>();
+
 
 
 

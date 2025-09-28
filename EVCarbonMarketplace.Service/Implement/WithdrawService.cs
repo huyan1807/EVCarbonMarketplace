@@ -23,7 +23,7 @@ namespace EVCarbonMarketplace.Service.Implement
     public class WithdrawService : BaseService<WithdrawService>, IWithdrawService
     {
         private readonly IUploadService _uploadService;
-        public WithdrawService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<WithdrawService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor , IUploadService uploadService) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        public WithdrawService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<WithdrawService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IUploadService uploadService) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
             _uploadService = uploadService;
         }
@@ -56,7 +56,7 @@ namespace EVCarbonMarketplace.Service.Implement
             var accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                 predicate: x => x.Id == accountId && x.IsActive == true
-                ) ?? throw new NotFoundException ("Không tìm thấy tài khoản");
+                ) ?? throw new NotFoundException("Không tìm thấy tài khoản");
             var bankAccount = await _unitOfWork.GetRepository<BankAccount>().SingleOrDefaultAsync(
                 predicate: x => x.Id == request.BankAccountId && x.AccountId == accountId && x.IsActive == true
                 ) ?? throw new NotFoundException("Không tìm thấy tài khoản ngân hàng");
@@ -76,7 +76,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 Amount = request.Amount,
                 Status = WithdrawEnum.Pending.ToString(),
                 CreateAt = TimeUtil.GetCurrentSEATime(),
-                
+
             };
             await _unitOfWork.GetRepository<Withdraw>().InsertAsync(withdraw);
             wallet.Cash -= request.Amount;
@@ -86,8 +86,8 @@ namespace EVCarbonMarketplace.Service.Implement
             {
                 Id = Guid.NewGuid(),
                 WalletId = wallet.Id,
-                Type = TransactionEnum.Withdraw.ToString(),     
-                Status = TransactionStatusEnum.Pending.ToString(),  
+                Type = TransactionEnum.Withdraw.ToString(),
+                Status = TransactionStatusEnum.Pending.ToString(),
                 Amount = request.Amount,
                 IsActive = true,
                 CreateAt = TimeUtil.GetCurrentSEATime(),
@@ -101,7 +101,7 @@ namespace EVCarbonMarketplace.Service.Implement
                     include: x => x.Include(w => w.BankAccount)
                 );
             var response = _mapper.Map<WithdrawResponse>(withdrawWithBank);
-           
+
             return new BaseResponse<WithdrawResponse>
             {
                 Status = StatusCodes.Status200OK.ToString(),
@@ -129,7 +129,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 ?? throw new NotFoundException("Không tìm thấy transaction của yêu cầu rút tiền");
             if (withdraw.Status != WithdrawEnum.Pending.ToString())
                 throw new BadHttpRequestException("Yêu cầu rút tiền đã được xử lý");
-            
+
             if (request.Status == WithdrawEnum.Approved)
             {
                 if (request.ProofUrl == null) throw new BadHttpRequestException("Vui lòng cung cấp hình ảnh chứng từ");
@@ -162,7 +162,7 @@ namespace EVCarbonMarketplace.Service.Implement
             var iSuccess = await _unitOfWork.CommitAsync() > 0;
             if (!iSuccess) throw new Exception("Có lỗi trong quá trình xử lý yêu cầu rút tiền");
             var response = _mapper.Map<WithdrawResponse>(withdraw);
-         
+
 
             return new BaseResponse<WithdrawResponse>
             {

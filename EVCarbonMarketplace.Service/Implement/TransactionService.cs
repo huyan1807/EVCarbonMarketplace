@@ -79,7 +79,7 @@ namespace EVCarbonMarketplace.Service.Implement
         },
 
 
-        predicate: x => (type == null || x.Type == type.ToString()) && (status == null || x.Status == status.ToString()) && x.IsActive == true  && x.Wallet.AccountId == accountId,
+        predicate: x => (type == null || x.Type == type.ToString()) && (status == null || x.Status == status.ToString()) && x.IsActive == true && x.Wallet.AccountId == accountId,
         include: i => i.Include(w => w.Wallet).Include(b => b.Buyer).Include(s => s.Seller).Include(l => l.CarbonListing).ThenInclude(c => c.CarbonCredit).ThenInclude(e => e.CarbonEmission),
         orderBy: o => o.OrderByDescending(c => c.CreateAt),
         page: page,
@@ -118,15 +118,20 @@ namespace EVCarbonMarketplace.Service.Implement
                 ) ?? throw new NotFoundException("Không tìm thấy ví người bán");
             if (buyerWallet.Cash < listing.Price)
             {
-                var amountNeeded = listing.Price- buyerWallet.Cash;
+                var amountNeeded = listing.Price - buyerWallet.Cash;
                 throw new BadHttpRequestException(
                     $"Số dư trong ví không đủ để thực hiện giao dịch. Vui lòng nạp thêm {amountNeeded:N0} VND."
                 );
             }
+            var feeSetting = await _unitOfWork.GetRepository<SystemSetting>()
+            .SingleOrDefaultAsync( predicate: s => s.Key == "TransactionFeeRate");
+            decimal feeRate = feeSetting != null ? decimal.Parse(feeSetting.Value) : 0;
+            decimal feeAmount = (listing.Price.Value * feeRate ) / 100;
+            decimal sellerReceive = listing.Price.Value - feeAmount;
             buyerWallet.Cash -= listing.Price;
-            buyerWallet.UpdateAt  = TimeUtil.GetCurrentSEATime();
+            buyerWallet.UpdateAt = TimeUtil.GetCurrentSEATime();
             buyerWallet.CarbonUnit += listing.CarbonCredit.Credits;
-            sellerWallet.Cash += listing.Price;
+            sellerWallet.Cash += sellerReceive;
             sellerWallet.CarbonUnit -= listing.CarbonCredit.Credits;
             sellerWallet.UpdateAt = TimeUtil.GetCurrentSEATime();
             _unitOfWork.GetRepository<Wallet>().UpdateAsync(buyerWallet);
@@ -134,7 +139,7 @@ namespace EVCarbonMarketplace.Service.Implement
 
             listing.Status = CarbonListingEnum.ListingStatus.Sold.ToString();
             listing.UpdateAt = TimeUtil.GetCurrentSEATime();
-             _unitOfWork.GetRepository<CarbonListing>().UpdateAsync(listing);
+            _unitOfWork.GetRepository<CarbonListing>().UpdateAsync(listing);
             var credit = listing.CarbonCredit
              ?? throw new NotFoundException("Không tìm thấy tín chỉ");
             credit.AccountId = accountId;
@@ -153,7 +158,8 @@ namespace EVCarbonMarketplace.Service.Implement
                 Description = "Mua tín chỉ carbon",
                 Type = TransactionEnum.Purchase.ToString(),
                 Status = "Success",
-                IsActive = true          
+                IsActive = true,
+                FeeRate = feeRate,
             };
             await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
@@ -187,7 +193,7 @@ namespace EVCarbonMarketplace.Service.Implement
             {
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Giao dịch thành công",
-                Data =  response
+                Data = response
             };
         }
     }

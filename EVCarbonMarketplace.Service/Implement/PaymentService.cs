@@ -32,9 +32,9 @@ namespace EVCarbonMarketplace.Service.Implement
         private readonly PayOSSettings _payOSSettings;
         private readonly IConnectionMultiplexer _redis;
         private readonly IEmailSender _emailSender;
-        public PaymentService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<PaymentService> logger, 
-            IMapper mapper, 
-            IHttpContextAccessor httpContextAccessor , 
+        public PaymentService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<PaymentService> logger,
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration config,
             IConnectionMultiplexer redis,
             IOptions<PayOSSettings> payOSSettings,
@@ -48,7 +48,7 @@ namespace EVCarbonMarketplace.Service.Implement
             _emailSender = emailSender;
         }
 
-        public async   Task<BaseResponse<string>> Create(PaymentRequest request)
+        public async Task<BaseResponse<string>> Create(PaymentRequest request)
         {
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
@@ -165,7 +165,7 @@ namespace EVCarbonMarketplace.Service.Implement
                         Id = Guid.NewGuid(),
                         WalletId = wallet.Id,
                         DepositId = deposit.Id,
-                        Type =TransactionEnum.Deposit.ToString(),
+                        Type = TransactionEnum.Deposit.ToString(),
                         Description = "Nạp tiền vào ví",
                         Status = "Success",
                         Amount = amount,

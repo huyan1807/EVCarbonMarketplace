@@ -162,5 +162,21 @@
             public const string UpdateStatus = DisputeEndPoint + "/status";
             public const string Delete = DisputeEndPoint + "/{id}";
         }
+
+        public static class Analytics
+        {
+            public const string AnalyticsEndPoint = ApiEndpoint + "/analytics";
+            public const string GetUsers = AnalyticsEndPoint + "/users";
+            public const string GetRegisteredUsersByDay = AnalyticsEndPoint + "/registered-users-by-day";
+            public const string GetRealtimeUsers = AnalyticsEndPoint + "/realtime-users";
+            public const string GetFinanceStats = AnalyticsEndPoint + "/finance-stats";
+            public const string GetTransactionStats = AnalyticsEndPoint + "/transaction-stats";
+        }
+        public static class SystemSetting
+        {
+            public const string SystemSettingEndPoint = ApiEndpoint + "/system-setting";
+            public const string GetTransactionFee = SystemSettingEndPoint + "/transaction-fee";
+            public const string UpdateTransactionFee = SystemSettingEndPoint + "/transaction-fee";
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 ) ?? throw new NotFoundException("Không tìm thấy giao dịch");
 
             if (transaction.Disputes.Any(x => x.SendAccountId == accountId && x.IsActive == true))
-                throw new BadHttpRequestException("Bạn đã tạo tranh chấp cho giao dịch này");            
+                throw new BadHttpRequestException("Bạn đã tạo tranh chấp cho giao dịch này");
             if (request.Type == null)
                 throw new BadHttpRequestException("Loại tranh chấp không được để trống");
             if (!Enum.IsDefined(typeof(DisputeTypeEnum), request.Type))
@@ -69,7 +69,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Tạo tranh chấp thành công",
                 Data = disputeResponse
-                
+
             };
 
         }
@@ -92,7 +92,7 @@ namespace EVCarbonMarketplace.Service.Implement
                     Status = s.Status,
                     CreateAt = s.CreateAt.Value,
                 },
-                predicate: x => x.IsActive == true && x.SendAccountId == accountId &&(type == null || x.Type == type.ToString())
+                predicate: x => x.IsActive == true && x.SendAccountId == accountId && (type == null || x.Type == type.ToString())
                     && (status == null || x.Status == status.ToString()),
                 include: s => s.Include(x => x.SendAccount).Include(x => x.Transaction),
                 size: size,
@@ -155,7 +155,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 {
                     Id = s.Id,
                     Type = s.Type,
-                    Status = s.Status ,
+                    Status = s.Status,
                     Description = s.Description,
                     EvidenceUrl = s.EvidenceUrl,
                     CreateAt = s.CreateAt,
@@ -173,7 +173,7 @@ namespace EVCarbonMarketplace.Service.Implement
                     BuyerId = s.Transaction.BuyerId,
                     BuyerName = s.Transaction.Buyer.FullName,
                     SellerId = s.Transaction.SellerId,
-                    SellerName = s.Transaction.Seller.FullName ,
+                    SellerName = s.Transaction.Seller.FullName,
 
                     CarbonListingId = s.Transaction.CarbonListingId.Value,
 

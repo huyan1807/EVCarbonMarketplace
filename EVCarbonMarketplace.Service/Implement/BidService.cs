@@ -37,21 +37,21 @@ namespace EVCarbonMarketplace.Service.Implement
                 ) ?? throw new NotFoundException("Không tìm thấy tín chỉ");
             if (listing.Type != CarbonListingEnum.ListingType.Auction.ToString())
                 throw new BadHttpRequestException("Listing này không phải đấu giá");
-  
-              var highestBid = (await _unitOfWork.GetRepository<Bid>().GetListAsync(
-                predicate: x => x.CarbonListingId == listingId && x.IsActive == true,
-                orderBy: q => q.OrderByDescending(x => x.Price) 
-            )).FirstOrDefault();
+
+            var highestBid = (await _unitOfWork.GetRepository<Bid>().GetListAsync(
+              predicate: x => x.CarbonListingId == listingId && x.IsActive == true,
+              orderBy: q => q.OrderByDescending(x => x.Price)
+          )).FirstOrDefault();
             var sellerWallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
               predicate: x => x.AccountId == listing.AccountId && x.IsActive == true
               ) ?? throw new NotFoundException("Không tìm thấy ví người bán");
-           
+
             if (highestBid == null)
             {
                 listing.Status = CarbonListingEnum.ListingStatus.Expired.ToString();
                 listing.UpdateAt = TimeUtil.GetCurrentSEATime();
-                 _unitOfWork.GetRepository<CarbonListing>().UpdateAsync(listing);
-              
+                _unitOfWork.GetRepository<CarbonListing>().UpdateAsync(listing);
+
 
                 sellerWallet.CarbonUnit += listing.CarbonCredit.Credits.Value;
                 sellerWallet.UpdateAt = TimeUtil.GetCurrentSEATime();
@@ -65,13 +65,21 @@ namespace EVCarbonMarketplace.Service.Implement
                     Data = null
                 };
             }
+            //phí
+            var feeSetting = await _unitOfWork.GetRepository<SystemSetting>()
+             .SingleOrDefaultAsync(predicate: s => s.Key == "TransactionFeeRate");
+            decimal feeRate = feeSetting != null ? decimal.Parse(feeSetting.Value) : 0;
+            decimal feeAmount = (highestBid.Price.Value * feeRate) / 100;
+            decimal sellerReceive = highestBid.Price.Value - feeAmount;
+
+            //Cập nhật ví người bán và người mua
             var buyerWallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
                  predicate: x => x.AccountId == highestBid.AccountId && x.IsActive == true
                  ) ?? throw new NotFoundException("Không tìm thấy ví người mua");
             buyerWallet.CarbonUnit += listing.CarbonCredit.Credits.Value;
             buyerWallet.UpdateAt = TimeUtil.GetCurrentSEATime();
 
-            sellerWallet.Cash += highestBid.Price.Value;
+            sellerWallet.Cash += sellerReceive;
             sellerWallet.UpdateAt = TimeUtil.GetCurrentSEATime();
             listing.Status = CarbonListingEnum.ListingStatus.Sold.ToString();
             listing.UpdateAt = TimeUtil.GetCurrentSEATime();
@@ -100,6 +108,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 if (t.BuyerId == highestBid.AccountId)
                 {
                     t.Status = "Success";
+                    t.FeeRate = feeRate;    
                 }
                 else
                 {
@@ -161,7 +170,7 @@ namespace EVCarbonMarketplace.Service.Implement
 
                 predicate: x => x.CarbonListingId == listingId && x.IsActive == true,
                 orderBy: q => q.OrderByDescending(b => b.Price),
-                page:page,
+                page: page,
                 size: size
                 );
             if (!bids.Items.Any()) throw new NotFoundException("Chưa có ai đấu giá");
@@ -199,7 +208,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 ) ?? throw new NotFoundException("Không tìm thấy ví người mua");
             if (buyerWallet.Cash < request.Price)
             {
-                var amountNeeded = request.Price- buyerWallet.Cash;
+                var amountNeeded = request.Price - buyerWallet.Cash;
                 throw new BadHttpRequestException(
                     $"Số dư trong ví không đủ để thực hiện đấu giá. Vui lòng nạp thêm {amountNeeded:N0} VND."
                 );
@@ -207,10 +216,10 @@ namespace EVCarbonMarketplace.Service.Implement
 
             var highestBid = await _unitOfWork.GetRepository<Bid>()
                 .GetListAsync(predicate: x => x.CarbonListingId == request.CarbonListingId && x.IsActive == true);
-            if (!highestBid.Any() && request.Price < listing.Price)
-            {
-                throw new BadHttpRequestException($"Giá khởi điểm là {listing.Price:N0}, bạn phải đặt giá cao hơn hoặc bằng.");
-            }
+            //if (!highestBid.Any() && request.Price < listing.Price)
+            //{
+            //    throw new BadHttpRequestException($"Giá khởi điểm là {listing.Price:N0}, bạn phải đặt giá cao hơn hoặc bằng.");
+            //}
             if (highestBid.Any() && request.Price <= highestBid.Max(x => x.Price))
             {
                 throw new BadHttpRequestException("Giá bạn đặt phải cao hơn giá hiện tại.");
@@ -224,14 +233,14 @@ namespace EVCarbonMarketplace.Service.Implement
                .OrderByDescending(x => x.Price)
                .FirstOrDefault();
 
-            var previousPrice = previousBid?.Price ?? 0m;   
+            var previousPrice = previousBid?.Price ?? 0m;
             var requiredHold = request.Price - previousPrice;
 
 
 
             buyerWallet.Cash -= requiredHold;
             buyerWallet.UpdateAt = TimeUtil.GetCurrentSEATime();
-             _unitOfWork.GetRepository<Wallet>().UpdateAsync(buyerWallet);
+            _unitOfWork.GetRepository<Wallet>().UpdateAsync(buyerWallet);
             var bid = new Bid
             {
                 Id = Guid.NewGuid(),
@@ -241,7 +250,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 Price = request.Price,
                 Status = BidEnum.Pending.ToString(),
                 IsActive = true,
-                CreateAt = TimeUtil.GetCurrentSEATime()               
+                CreateAt = TimeUtil.GetCurrentSEATime()
             };
             await _unitOfWork.GetRepository<Bid>().InsertAsync(bid);
             var holdTransaction = new Transaction
@@ -272,12 +281,12 @@ namespace EVCarbonMarketplace.Service.Implement
                 Data = new BidResponse
                 {
                     AccountId = accountId,
-                    CarbonListingId =request.CarbonListingId,
+                    CarbonListingId = request.CarbonListingId,
                     BidTime = bid.BidTime,
                     Price = bid.Price,
                     CreateAt = bid.CreateAt,
                     Id = bid.Id,
-                    Status = bid.Status,                   
+                    Status = bid.Status,
                 }
             };
         }
