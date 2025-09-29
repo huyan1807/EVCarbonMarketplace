@@ -15,6 +15,10 @@ using Google.Apis.Services;
 using EVCarbonMarketplace.Service.Interface;
 using EVCarbonMarketplace.Service.Implement;
 using StackExchange.Redis;
+using EVCarbonMarketplace.Model.Payload.Settings;
+using System.Text;
+using FirebaseAdmin;
+using Google.Cloud.Storage.V1;
 namespace EVCarbonMarketplace.API
 {
     public static class DependencyInjection
@@ -129,6 +133,7 @@ namespace EVCarbonMarketplace.API
             services.AddScoped<IDisputeService, DisputeService>();
             services.AddScoped<IAnalyticsService, AnalyticsService>();
             services.AddScoped<ISystemSettingService, SystemSettingService>();
+            services.AddScoped<ICertificateService, CertificateService>();
 
 
 
@@ -179,6 +184,41 @@ namespace EVCarbonMarketplace.API
                 ?? throw new InvalidOperationException("Redis connection string not found");
             services.AddSingleton<IConnectionMultiplexer>(
                 _ => ConnectionMultiplexer.Connect(redisConn));
+            return services;
+        }
+    
+
+        public static IServiceCollection AddFirebaseStorage(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Lấy config từ appsettings.json
+            var firebaseConfig = configuration.GetSection("Firebase").Get<FirebaseSettings>();
+
+            if (string.IsNullOrEmpty(firebaseConfig.CredentialPath))
+                throw new InvalidOperationException("Firebase:CredentialPath is missing in configuration.");
+
+            if (!File.Exists(firebaseConfig.CredentialPath))
+            {
+                firebaseConfig.CredentialPath = Path.Combine(Directory.GetCurrentDirectory(), firebaseConfig.CredentialPath);
+            }
+
+            if (!File.Exists(firebaseConfig.CredentialPath))
+                throw new FileNotFoundException("Không tìm thấy file Firebase credentials", firebaseConfig.CredentialPath);
+
+            if (FirebaseApp.DefaultInstance == null)
+            {
+                FirebaseApp.Create(new AppOptions()
+                {
+                    Credential = GoogleCredential.FromFile(firebaseConfig.CredentialPath)
+                });
+            }
+
+            // Tạo StorageClient
+            var storageClient = StorageClient.Create(GoogleCredential.FromFile(firebaseConfig.CredentialPath));
+
+            // Đăng ký FirebaseSettings và StorageClient vào DI
+            services.Configure<FirebaseSettings>(configuration.GetSection("Firebase"));
+            services.AddSingleton(storageClient);
+
             return services;
         }
 

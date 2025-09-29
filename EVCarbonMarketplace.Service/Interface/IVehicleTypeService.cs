@@ -1,5 +1,6 @@
 ﻿using EVCarbonMarketplace.Model.Entity;
 using EVCarbonMarketplace.Model.Paginate;
+using EVCarbonMarketplace.Model.Payload.Request;
 using EVCarbonMarketplace.Model.Payload.Response;
 using EVCarbonMarketplace.Model.Payload.Response.VehicleType;
 using System;
@@ -14,5 +15,7 @@ namespace EVCarbonMarketplace.Service.Interface
     public interface IVehicleTypeService
     {
         Task<BaseResponse<IPaginate<VehicleTypeResponse>>> GetAll(int page , int size);
+        Task<BaseResponse<VehicleTypeResponse>> Create(VehicleTypeRequest request);
+        Task<BaseResponse<bool>> Delete(Guid id);
     }
 }

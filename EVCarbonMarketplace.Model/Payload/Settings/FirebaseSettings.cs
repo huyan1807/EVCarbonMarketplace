@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace EVCarbonMarketplace.Model.Payload.Settings
 {
-    public class GoogleDriveSettings
+    public class FirebaseSettings
     {
-        public string CredentialsFile { get; set; }
-        public string FolderId { get; set; }
+        public string CredentialPath { get; set; }
+        public string Bucket { get; set; }
     }
+
 }

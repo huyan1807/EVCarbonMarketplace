@@ -11,7 +11,7 @@ public partial class Certificate
 
     public int? SerialNumber { get; set; }
 
-    public string? ImgUrl { get; set; }
+    public string? CertificateUrl { get; set; }
 
     public string? Status { get; set; }
 
@@ -27,11 +27,7 @@ public partial class Certificate
 
     public Guid? BuyerId { get; set; }
 
-    public Guid? IssuedById { get; set; }
-
     public virtual Account? Buyer { get; set; }
 
     public virtual CarbonCredit? CarbonCredit { get; set; }
-
-    public virtual Account? IssuedBy { get; set; }
 }

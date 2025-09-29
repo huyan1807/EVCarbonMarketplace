@@ -25,6 +25,7 @@
         {
             public const string AuthenticationEndPoint = ApiEndpoint + "/auth";
             public const string Authenticate = AuthenticationEndPoint;
+            public const string Test = AuthenticationEndPoint + "/Test";
 
         }
         public static class GoogleAuthentication
@@ -92,6 +93,8 @@
         {
             public const string VehicleTypeEndPoint = ApiEndpoint + "/vehicle-type";
             public const string GetAll = VehicleTypeEndPoint;
+            public const string Create = VehicleTypeEndPoint;
+            public const string Delete = VehicleTypeEndPoint + "/{id}";
         }
 
         public static class Wallet
@@ -177,6 +180,17 @@
             public const string SystemSettingEndPoint = ApiEndpoint + "/system-setting";
             public const string GetTransactionFee = SystemSettingEndPoint + "/transaction-fee";
             public const string UpdateTransactionFee = SystemSettingEndPoint + "/transaction-fee";
+        }
+
+        public static class Certificate
+        {
+            public const string CertificateEndPoint = ApiEndpoint + "/certificate";
+            public const string Generate = CertificateEndPoint + "/generate/{carbonCreditId}";
+            public const string GetMyCertificates = CertificateEndPoint + "/my-certificates";
+            public const string GetAll = CertificateEndPoint;
+            public const string GetCertificate = CertificateEndPoint + "/{carbonCreditId}";
+            public const string Delete = CertificateEndPoint + "/{id}";
+
         }
     }
 }

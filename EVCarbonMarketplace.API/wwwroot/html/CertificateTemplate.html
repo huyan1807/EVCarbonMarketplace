@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>Giấy Chứng Nhận Tín Chỉ Carbon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #1f2937;
+            margin: 0;
+            background: #fff;
+        }
+
+        .page {
+            padding: 20px 24px;
+            text-align: center;
+        }
+
+        .frame {
+            border: 6px solid #065f46;
+            padding: 12px;
+            position: relative;
+        }
+
+            .frame::before {
+                content: "";
+                position: absolute;
+                top: 16px;
+                bottom: 16px;
+                left: 16px;
+                right: 16px;
+                border: 1px dashed #9ca3af;
+            }
+
+        .watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.1; /* độ mờ */
+            background-image: url('watermark.png');
+            background-repeat: repeat; /* lặp lại cả chiều ngang và dọc */
+            background-position: center;
+            background-size: 200px auto; /* chỉnh kích thước watermark */
+            transform: rotate(-30deg); /* xoay toàn bộ lớp background */
+            pointer-events: none; /* không ảnh hưởng đến click */
+        }
+
+
+            .watermark img {
+                width: 100%;
+            }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 20px 30px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #065f46;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 18px;
+        }
+
+        .recipient {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .recipient-name {
+            font-size: 30px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #066e57;
+            margin: 8px 0 14px;
+        }
+
+        .statement {
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        /* dùng table thay vì grid/flex để wkhtmltopdf đọc chắc chắn */
+        .stats {
+            display: table;
+            font-size: 12px;
+            background: #f9fafb;
+            padding: 12px 18px;
+            margin: 0 auto 20px auto;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stats-row {
+            display: table-row;
+        }
+
+        .stats .label, .stats .value {
+            display: table-cell;
+            padding: 4px 12px;
+        }
+
+        .stats .label {
+            color: #6b7280;
+        }
+
+        .stats .value {
+            font-weight: bold;
+        }
+
+        .rule {
+            height: 1px;
+            background: #9ca3af;
+            margin: 20px 0;
+        }
+
+        .footer {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .signature-img {
+            height: 50px;
+            margin-right: 25px;
+        }
+
+        .sign-line {
+            width: 140px;
+            height: 1px;
+            background: #9ca3af;
+            margin: 4px 0 2px auto;
+        }
+
+        .sign-role {
+            font-size: 11px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="frame">
+            <div class="watermark">
+                <img src="https://res.cloudinary.com/dgg6s1i72/image/upload/v1759145736/z7063002557884_c53a0186fb6d276c1c414b4f2c02885d_m41fxb.jpg" alt="Watermark" />
+            </div>
+
+            <div class="content">
+                <div class="title">Giấy Chứng Nhận Tín Chỉ Carbon</div>
+                <div class="subtitle">Phát hành bởi CarbonLeaf</div>
+
+                <div class="recipient">Người nhận</div>
+                <div class="recipient-name">{BuyerName}</div>
+
+                <div class="statement">
+                    Chính thức được cấp Giấy Chứng Nhận Tín Chỉ Carbon
+                </div>
+
+                <div class="stats">
+                    <div class="stats-row"><div class="label">Mã Tín Chỉ Carbon</div><div class="value">{CarbonCreditId}</div></div>
+                    <div class="stats-row"><div class="label">Số lượng (tCO₂e)</div><div class="value">{Quantity}</div></div>
+                    <div class="stats-row"><div class="label">Số lượng Tín chỉ</div><div class="value">{Credits}</div></div>
+                    <div class="stats-row"><div class="label">Nguồn tín chỉ</div><div class="value">{CarbonEmissionId}</div></div>
+                    <div class="stats-row"><div class="label">Năm phát hành (Vintage)</div><div class="value">{Vintage}</div></div>
+                    <div class="stats-row"><div class="label">Mã chứng chỉ</div><div class="value">{SerialNumber}</div></div>
+                    <div class="stats-row"><div class="label">Thời điểm cấp</div><div class="value">{IssuedAt}</div></div>
+                    <div class="stats-row"><div class="label">Tình trạng tín chỉ</div><div class="value">{Status}</div></div>
+                    <div class="stats-row"><div class="label">Nền tảng</div><div class="value">CarbonLeaf</div></div>
+                </div>
+
+                <div class="rule"></div>
+
+                <div class="footer">
+                    <img src="https://res.cloudinary.com/dgg6s1i72/image/upload/v1759145451/z7063002557851_ceaf14874177add0bf80fafaf49a67b1_rcfmq2.jpg"
+                         class="signature-img" alt="Chữ ký" />
+                    <div class="sign-line"></div>
+                    <div class="sign-role">Chữ ký uỷ quyền — CarbonLeaf</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

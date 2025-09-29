@@ -61,6 +61,7 @@ public partial class EvcarbonMarketplaceContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer(GetConnectionString("DefaultDB")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
@@ -206,22 +207,17 @@ public partial class EvcarbonMarketplaceContext : DbContext
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
-            entity.Property(e => e.ImgUrl).HasColumnName("imgUrl");
             entity.Property(e => e.IssuedAt).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
 
-            entity.HasOne(d => d.Buyer).WithMany(p => p.CertificateBuyers)
+            entity.HasOne(d => d.Buyer).WithMany(p => p.Certificates)
                 .HasForeignKey(d => d.BuyerId)
                 .HasConstraintName("FK_Certificate_BuyerId");
 
             entity.HasOne(d => d.CarbonCredit).WithMany(p => p.Certificates)
                 .HasForeignKey(d => d.CarbonCreditId)
                 .HasConstraintName("FK_Certificate_CarbonCreditId");
-
-            entity.HasOne(d => d.IssuedBy).WithMany(p => p.CertificateIssuedBies)
-                .HasForeignKey(d => d.IssuedById)
-                .HasConstraintName("FK_Certificate_IssuedBy");
         });
 
         modelBuilder.Entity<Deposit>(entity =>

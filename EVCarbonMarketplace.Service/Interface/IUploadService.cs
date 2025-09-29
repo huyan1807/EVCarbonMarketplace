@@ -10,6 +10,6 @@ namespace EVCarbonMarketplace.Service.Interface
     public interface IUploadService
     {
         Task<string> UploadImage(IFormFile file);
-
+        Task<string> UploadToFirebaseAsync(IFormFile fileToUpload);
     }
 }

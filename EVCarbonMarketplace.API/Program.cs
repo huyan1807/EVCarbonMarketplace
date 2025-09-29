@@ -1,3 +1,5 @@
+using DinkToPdf.Contracts;
+using DinkToPdf;
 using EVCarbonMarketplace.API;
 using EVCarbonMarketplace.API.Constant;
 using EVCarbonMarketplace.API.Middlewares;
@@ -45,6 +47,9 @@ builder.Services.AddHttpClient();
 builder.Services.AddHttpClientServices();
 builder.Services.AddCloudinary(builder.Configuration);
 builder.Services.AddRedis(builder.Configuration);
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+builder.Services.AddFirebaseStorage(builder.Configuration);
+
 builder.Services.Configure<PayOSSettings>(builder.Configuration.GetSection("PayOS"));
 builder.Services.AddHostedService<AuctionBackgroundService>();
 

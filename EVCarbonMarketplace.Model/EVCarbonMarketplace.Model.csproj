@@ -7,6 +7,7 @@
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
+		<PackageReference Include="DinkToPdf" Version="1.0.8" />
 		<PackageReference Include="FirebaseAdmin" Version="3.3.0" />
 		<PackageReference Include="Google.Analytics.Data.V1Beta" Version="1.0.0-beta6" />
 		<PackageReference Include="AutoMapper" Version="14.0.0" />
@@ -15,6 +16,7 @@
 		<PackageReference Include="Google.Apis.Drive.v3" Version="1.69.0.3783" />
 		<PackageReference Include="Google.Apis.Oauth2.v2" Version="1.68.0.1869" />
 		<PackageReference Include="Google.Cloud.Firestore" Version="3.10.0" />
+		<PackageReference Include="Google.Cloud.Storage.V1" Version="4.13.0" />
 		<PackageReference Include="MailKit" Version="4.12.1" />
 		<PackageReference Include="MegaApiClient" Version="1.10.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.15" />
@@ -37,6 +39,7 @@
 	</ItemGroup>
   <ItemGroup>
     <Folder Include="Entity\" />
+    <Folder Include="Payload\Request\Certificate\" />
     <Folder Include="Payload\Response\Owner\" />
   </ItemGroup>
 

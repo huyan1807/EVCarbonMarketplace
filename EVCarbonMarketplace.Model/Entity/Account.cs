@@ -41,9 +41,7 @@ public partial class Account
 
     public virtual ICollection<CarbonListing> CarbonListings { get; set; } = new List<CarbonListing>();
 
-    public virtual ICollection<Certificate> CertificateBuyers { get; set; } = new List<Certificate>();
-
-    public virtual ICollection<Certificate> CertificateIssuedBies { get; set; } = new List<Certificate>();
+    public virtual ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
 
     public virtual ICollection<Deposit> Deposits { get; set; } = new List<Deposit>();
 

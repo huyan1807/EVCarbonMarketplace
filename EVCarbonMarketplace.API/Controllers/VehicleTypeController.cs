@@ -25,6 +25,24 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _vehicleTypeService.GetAll(page, size);
             return StatusCode(int.Parse(response.Status), response);
         }
+        [HttpPost(ApiEndPointConstant.VehicleType.Create)]
+        [ProducesResponseType(typeof(BaseResponse<VehicleTypeResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<VehicleTypeResponse>), StatusCodes.Status400BadRequest)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> Create([FromBody] Model.Payload.Request.VehicleTypeRequest request)
+        {
+            var response = await _vehicleTypeService.Create(request);
+            return StatusCode(int.Parse(response.Status), response);
+        }
+        [HttpDelete(ApiEndPointConstant.VehicleType.Delete)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var response = await _vehicleTypeService.Delete(id);
+            return StatusCode(int.Parse(response.Status), response);
+        }
 
 
     }
