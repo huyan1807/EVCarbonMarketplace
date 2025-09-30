@@ -28,6 +28,27 @@ namespace EVCarbonMarketplace.Service.Implement
             _uploadService = uploadService;
         }
 
+        public async Task<BaseResponse<IPaginate<WithdrawResponse>>> GetAllWithdraw(int page, int size, WithdrawEnum? status)
+        {
+          
+            var withdraws = await _unitOfWork.GetRepository<Withdraw>().GetPagingListAsync(
+                selector: x => _mapper.Map<WithdrawResponse>(x),
+
+                predicate: x =>  (status == null || x.Status == status.ToString()),
+                include: source => source.Include(w => w.BankAccount),
+                orderBy: source => source.OrderByDescending(w => w.CreateAt),
+                page: page,
+                size: size
+                );
+            return new BaseResponse<IPaginate<WithdrawResponse>>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy lịch sử rút tiền thành công",
+                Data = withdraws
+            };
+
+        }
+
         public async Task<BaseResponse<IPaginate<WithdrawResponse>>> GetWithdrawHistory(int page, int size, WithdrawEnum? status)
         {
             var accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);

@@ -38,7 +38,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _certificateService.GetCertificate(carbonCreditId);
             return StatusCode(int.Parse(response.Status), response);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Cva")]
         [HttpGet(ApiEndPointConstant.Certificate.GetAll)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,7 +47,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _certificateService.GetAll(page, size);
             return StatusCode(int.Parse(response.Status), response);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Cva")]
         [HttpDelete(ApiEndPointConstant.Certificate.Delete)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

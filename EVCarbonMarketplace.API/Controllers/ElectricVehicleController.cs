@@ -63,7 +63,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _electricVehicleService.Delete(id);
             return StatusCode(StatusCodes.Status200OK, response);
         }
-
+        [Authorize(Roles = "Admin,Cva")]
         [HttpGet(ApiEndPointConstant.EVehicle.GetAll)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<ElectricVehicleResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<ElectricVehicleResponse>>), StatusCodes.Status404NotFound)]

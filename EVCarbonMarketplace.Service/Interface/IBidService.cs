@@ -16,5 +16,7 @@ namespace EVCarbonMarketplace.Service.Interface
         Task<BaseResponse<BidResponse>> PlaceBid(BidRequest request);
         Task<BaseResponse<BidResponse>> FinalizeAuction(Guid listingId);
         Task<BaseResponse<IPaginate<BidResponse>>> GetCurrentBid(int page , int size,Guid listingId);
+
+
     }
 }

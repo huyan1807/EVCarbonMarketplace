@@ -30,7 +30,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _carbonListingService.Create(request, type);
             return StatusCode(StatusCodes.Status200OK, response);
         }
-
+        [Authorize(Roles = "Admin,Cva")]
         [HttpGet(ApiEndPointConstant.CarbonListing.GetAll)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonListingManagerResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonListingManagerResponse>>), StatusCodes.Status404NotFound)]
@@ -40,7 +40,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _carbonListingService.GetAll(page, size, type, status);
             return StatusCode(StatusCodes.Status200OK, response);
         }
-
+        [Authorize(Roles = "Admin,Cva")]
         [HttpDelete(ApiEndPointConstant.CarbonListing.Delete)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]

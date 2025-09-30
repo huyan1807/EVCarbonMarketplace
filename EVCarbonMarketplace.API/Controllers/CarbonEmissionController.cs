@@ -8,6 +8,7 @@ using EVCarbonMarketplace.Model.Entity;
 using EVCarbonMarketplace.Model.Payload.Response.CarbonEmission;
 using EVCarbonMarketplace.Model.Paginate;
 using EVCarbonMarketplace.Model.Enum;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EVCarbonMarketplace.API.Controllers
 {
@@ -29,7 +30,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _carbonEmissionService.ImportTelemetryFromFileAsync(Id, file);
             return StatusCode(StatusCodes.Status200OK, response);
         }
-
+        [Authorize(Roles = "Admin,Cva")]
         [HttpGet(ApiEndPointConstant.CarbonEmissions.GetAll)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonEmissionManageResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<CarbonEmissionManageResponse>), StatusCodes.Status404NotFound)]
@@ -49,7 +50,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _carbonEmissionService.GetById(id);
             return StatusCode(StatusCodes.Status200OK, response);
         }
-
+        [Authorize(Roles = "Admin,Cva")]
         [HttpPut(ApiEndPointConstant.CarbonEmissions.ApproveEmission)]
         [ProducesResponseType(typeof(BaseResponse<CarbonEmissionResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<CarbonEmissionResponse>), StatusCodes.Status404NotFound)]

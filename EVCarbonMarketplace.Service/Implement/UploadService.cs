@@ -32,7 +32,6 @@ namespace EVCarbonMarketplace.Service.Implement
             _cloudinary = cloudinary;
      
           
-            // Lấy config Firebase từ appsettings.json
             var credentialPath = config["Firebase:CredentialPath"];
             _firebaseBucket = config["Firebase:Bucket"];
 
@@ -83,27 +82,7 @@ namespace EVCarbonMarketplace.Service.Implement
 
        
 
-        //public async Task<string> UploadToFirebaseAsync(IFormFile fileToUpload)
-        //{
-        //    if (fileToUpload == null) throw new NotFoundException();
-
-        //    var allowedExtensions = new[] { ".docx", ".pdf", ".mov", ".xlsx", ".mp4", ".jpg", ".txt" };
-        //    var ext = Path.GetExtension(fileToUpload.FileName).ToLower();
-        //    if (!allowedExtensions.Contains(ext))
-        //        throw new InvalidOperationException("Định dạng file không được hỗ trợ.");
-
-        //    using var stream = fileToUpload.OpenReadStream();
-        //    var fileName = $"{Guid.NewGuid()}-{fileToUpload.FileName}";
-
-        //    await _storageClient.UploadObjectAsync(
-        //        bucket: _firebaseBucket,
-        //        objectName: fileName,
-        //        contentType: fileToUpload.ContentType,
-        //        source: stream
-        //    );
-
-        //    return $"https://firebasestorage.googleapis.com/v0/b/{_firebaseBucket}/o/{Uri.EscapeDataString(fileName)}?alt=media";
-        //}
+   
         public async Task<string> UploadToFirebaseAsync(IFormFile fileToUpload)
         {
             if (fileToUpload == null) throw new NotFoundException();
@@ -115,7 +94,6 @@ namespace EVCarbonMarketplace.Service.Implement
 
             using var stream = fileToUpload.OpenReadStream();
 
-            // ✅ Đặt tên file trong thư mục ảo certificates/
             var fileName = $"certificates/{Guid.NewGuid()}-{fileToUpload.FileName}";
 
             await _storageClient.UploadObjectAsync(
@@ -125,7 +103,6 @@ namespace EVCarbonMarketplace.Service.Implement
                 source: stream
             );
 
-            // Trả về public URL
             return $"https://firebasestorage.googleapis.com/v0/b/{_firebaseBucket}/o/{Uri.EscapeDataString(fileName)}?alt=media";
         }
 

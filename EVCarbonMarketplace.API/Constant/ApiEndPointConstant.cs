@@ -152,6 +152,7 @@
             public const string Create = WithdrawEndPoint;
             public const string GetMyWithdraws = WithdrawEndPoint + "/my-withdraws";
             public const string UpdateStatus = WithdrawEndPoint + "/status";
+            public const string GetAllWithdraws = WithdrawEndPoint;
         }
 
         public static class Dispute

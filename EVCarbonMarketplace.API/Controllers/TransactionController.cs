@@ -3,6 +3,7 @@ using EVCarbonMarketplace.Model.Enum;
 using EVCarbonMarketplace.Model.Payload.Response;
 using EVCarbonMarketplace.Model.Payload.Response.Transaction;
 using EVCarbonMarketplace.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
@@ -26,6 +27,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _transactionService.Purchase(listingId);
             return StatusCode(StatusCodes.Status200OK, response);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet(ApiEndPointConstant.Transaction.GetAll)]
         [ProducesResponseType(typeof(BaseResponse<List<TransactionResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<List<TransactionResponse>>), StatusCodes.Status404NotFound)]

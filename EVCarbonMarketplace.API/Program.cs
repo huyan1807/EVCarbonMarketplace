@@ -12,16 +12,7 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy(name: CorsConstant.PolicyName,
-//        policy =>
-//        {
-//            policy.WithOrigins("*")
-//                .AllowAnyHeader().AllowAnyMethod();
-//        });
-//});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: CorsConstant.PolicyName,
@@ -102,10 +93,7 @@ app.UseCors(CorsConstant.PolicyName);
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction() || app.Environment.IsStaging())
 {
     app.UseSwagger();
-    //app.UseSwaggerUI(c =>
-    //{
-    //    c.InjectStylesheet("/css/Swagger.css");
-    //});
+
     app.UseSwaggerUI();
 }
 

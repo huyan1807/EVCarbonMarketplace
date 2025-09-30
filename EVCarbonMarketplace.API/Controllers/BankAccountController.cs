@@ -3,6 +3,7 @@ using EVCarbonMarketplace.Model.Payload.Request.BankAccount;
 using EVCarbonMarketplace.Model.Payload.Response;
 using EVCarbonMarketplace.Model.Payload.Response.BankAccount;
 using EVCarbonMarketplace.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,7 @@ namespace EVCarbonMarketplace.API.Controllers
         {
             _bankAccountService = bankAccountService;
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost(ApiEndPointConstant.BankAccount.Create)]
         [ProducesResponseType(typeof(BaseResponse<BankAccountResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<BankAccountResponse>), StatusCodes.Status400BadRequest)]
@@ -54,6 +55,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var result = await _bankAccountService.GetDefaultBankAccount();
             return StatusCode(int.Parse(result.Status), result);
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete(ApiEndPointConstant.BankAccount.Delete)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status400BadRequest)]

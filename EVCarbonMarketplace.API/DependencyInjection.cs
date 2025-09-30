@@ -190,7 +190,6 @@ namespace EVCarbonMarketplace.API
 
         public static IServiceCollection AddFirebaseStorage(this IServiceCollection services, IConfiguration configuration)
         {
-            // Lấy config từ appsettings.json
             var firebaseConfig = configuration.GetSection("Firebase").Get<FirebaseSettings>();
 
             if (string.IsNullOrEmpty(firebaseConfig.CredentialPath))
@@ -212,10 +211,8 @@ namespace EVCarbonMarketplace.API
                 });
             }
 
-            // Tạo StorageClient
             var storageClient = StorageClient.Create(GoogleCredential.FromFile(firebaseConfig.CredentialPath));
 
-            // Đăng ký FirebaseSettings và StorageClient vào DI
             services.Configure<FirebaseSettings>(configuration.GetSection("Firebase"));
             services.AddSingleton(storageClient);
 

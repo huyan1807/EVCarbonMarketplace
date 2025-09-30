@@ -16,5 +16,8 @@ namespace EVCarbonMarketplace.Service.Interface
         Task<BaseResponse<WithdrawResponse>> RequestWithdraw(WithdrawRequest request);
         Task<BaseResponse<IPaginate<WithdrawResponse>>> GetWithdrawHistory(int page, int size , WithdrawEnum? status);
         Task<BaseResponse<WithdrawResponse>> UpdateWithdrawStatus(UpdateWithdrawRequest request );
+
+        Task<BaseResponse<IPaginate<WithdrawResponse>>> GetAllWithdraw(int page, int size, WithdrawEnum? status);
+
     }
 }

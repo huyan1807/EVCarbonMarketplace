@@ -2,6 +2,7 @@
 using EVCarbonMarketplace.Model.Enum;
 using EVCarbonMarketplace.Model.Payload.Request.Dispute;
 using EVCarbonMarketplace.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _disputeService.Create(request);
             return StatusCode(int.Parse(response.Status), response);
         }
+        [Authorize(Roles = "Admin,Cva")]
         [HttpPut(ApiEndPointConstant.Dispute.UpdateStatus)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -55,6 +57,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _disputeService.GetById(id);
             return StatusCode(int.Parse(response.Status), response);
         }
+        [Authorize(Roles = "Admin,Cva")]
         [HttpGet(ApiEndPointConstant.Dispute.GetAll)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

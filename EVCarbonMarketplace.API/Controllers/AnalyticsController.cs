@@ -1,5 +1,6 @@
 ﻿using EVCarbonMarketplace.API.Constant;
 using EVCarbonMarketplace.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,7 @@ namespace EVCarbonMarketplace.API.Controllers
         {
             _analyticsService = analyticsService;
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet(ApiEndPointConstant.Analytics.GetUsers)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -22,6 +23,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _analyticsService.GetUsers();
             return StatusCode(int.Parse(response.Status), response);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet(ApiEndPointConstant.Analytics.GetRealtimeUsers)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -30,6 +32,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _analyticsService.GetRealtimeUsers();
             return StatusCode(int.Parse(response.Status), response);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet(ApiEndPointConstant.Analytics.GetRegisteredUsersByDay)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -38,6 +41,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _analyticsService.GetRegisteredUsersByDay();
             return StatusCode(int.Parse(response.Status), response);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet(ApiEndPointConstant.Analytics.GetFinanceStats)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -46,6 +50,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _analyticsService.GetFinanceStats();
             return StatusCode(int.Parse(response.Status), response);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet(ApiEndPointConstant.Analytics.GetTransactionStats)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -1,5 +1,6 @@
 ﻿using EVCarbonMarketplace.API.Constant;
 using EVCarbonMarketplace.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,7 @@ namespace EVCarbonMarketplace.API.Controllers
             _systemSettingService = systemSettingService;
 
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet(ApiEndPointConstant.SystemSetting.GetTransactionFee)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -22,6 +24,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _systemSettingService.GetTransactionFee();
             return StatusCode(int.Parse(response.Status), response);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPut(ApiEndPointConstant.SystemSetting.UpdateTransactionFee)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
