@@ -30,7 +30,6 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _carbonListingService.Create(request, type);
             return StatusCode(StatusCodes.Status200OK, response);
         }
-        [Authorize(Roles = "Admin,Cva")]
         [HttpGet(ApiEndPointConstant.CarbonListing.GetAll)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonListingManagerResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonListingManagerResponse>>), StatusCodes.Status404NotFound)]
