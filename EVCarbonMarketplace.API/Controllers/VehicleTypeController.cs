@@ -16,7 +16,6 @@ namespace EVCarbonMarketplace.API.Controllers
         {
             _vehicleTypeService = vehicleTypeService;
         }
-        [Authorize(Roles = "Admin")]
         [HttpGet(ApiEndPointConstant.VehicleType.GetAll)]
         [ProducesResponseType(typeof(BaseResponse<VehicleTypeResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<VehicleTypeResponse>), StatusCodes.Status404NotFound)]
