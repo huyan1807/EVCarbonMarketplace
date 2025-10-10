@@ -18,6 +18,8 @@ namespace EVCarbonMarketplace.Model.Payload.Response.User
 
         public string? AvatarUrl { get; set; }
 
+        public string? UserName { get; set; }
+
 
         public DateOnly? DateOfBirth { get; set; }
 

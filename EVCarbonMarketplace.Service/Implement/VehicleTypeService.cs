@@ -86,7 +86,7 @@ namespace EVCarbonMarketplace.Service.Implement
             }
 
             vehicleType.IsActive = false;
-            vehicleType.UpdateAt = TimeUtil.GetCurrentSEATime();
+            vehicleType.DeleteAt = TimeUtil.GetCurrentSEATime();
             _unitOfWork.GetRepository<VehicleType>().UpdateAsync(vehicleType);
             var iSucces = await _unitOfWork.CommitAsync() > 0;
             if (!iSucces)

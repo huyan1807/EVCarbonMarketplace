@@ -15,7 +15,6 @@ namespace EVCarbonMarketplace.API.Controllers
             _systemSettingService = systemSettingService;
 
         }
-        [Authorize(Roles = "Admin")]
         [HttpGet(ApiEndPointConstant.SystemSetting.GetTransactionFee)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

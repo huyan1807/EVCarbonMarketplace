@@ -49,7 +49,8 @@ namespace EVCarbonMarketplace.Service.Implement
                         AvatarUrl = existingUser.AvatarUrl,
                         DateOfBirth = existingUser.DateOfBirth,
                         Gender = existingUser.Gender,
-                      
+                        UserName = existingUser.Username,
+
                     }
                 };
             }
@@ -106,7 +107,8 @@ namespace EVCarbonMarketplace.Service.Implement
                     AvatarUrl = account.AvatarUrl,
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
-                 
+                    UserName = account.Username,
+
                 }
             };
         }
@@ -172,6 +174,7 @@ namespace EVCarbonMarketplace.Service.Implement
                    DateOfBirth = u.DateOfBirth,
                    AvatarUrl = u.AvatarUrl,
                    Gender = u.Gender,
+                   UserName = u.Username,
                },
                predicate: u => u.IsActive == true && u.Role.Equals(role.ToString()),
                orderBy: u => u.OrderByDescending(u => u.CreateAt),
@@ -197,7 +200,8 @@ namespace EVCarbonMarketplace.Service.Implement
                    Phone = u.Phone,
                    DateOfBirth = u.DateOfBirth,
                    AvatarUrl = u.AvatarUrl,
-                   Gender = u.Gender,             
+                   Gender = u.Gender,
+                   UserName = u.Username,
                },
                predicate: u => u.IsActive == true && u.Id.Equals(id)
               );
@@ -236,7 +240,8 @@ namespace EVCarbonMarketplace.Service.Implement
                     Phone = account.Phone,
                     AvatarUrl = account.AvatarUrl,
                     DateOfBirth = account.DateOfBirth,
-                    Gender = account.Gender,               
+                    Gender = account.Gender,
+                    UserName = account.Username,
                 }
             };
         }
@@ -276,7 +281,8 @@ namespace EVCarbonMarketplace.Service.Implement
                     Phone = account.Phone,
                     AvatarUrl = account.AvatarUrl,
                     DateOfBirth = account.DateOfBirth,
-                    Gender = account.Gender,                
+                    Gender = account.Gender,
+                    UserName = account.Username,
                 }
             };
         }
