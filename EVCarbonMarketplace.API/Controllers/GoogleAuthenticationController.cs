@@ -41,18 +41,18 @@ namespace EVCarbonMarketplace.API.Controllers
             }
             var token = await _userService.CreateTokenByEmail(googleAuthResponse.Email);
 
-            //var jsonData = JsonConvert.SerializeObject(token);
-            //string htmlResponse = $@"
-            //<html>
-            //  <body>
-            //    <script>
-            //      window.opener.postMessage({jsonData}, '*');
-            //      window.close();
-            //    </script>
-            //  </body>
-            //</html>";
-            //return Content(htmlResponse, "text/html");
-            return StatusCode(int.Parse(token.Status), token.Data);
+            var jsonData = JsonConvert.SerializeObject(token);
+            string htmlResponse = $@"
+            <html>
+              <body>
+                <script>
+                  window.opener.postMessage({jsonData}, '*');
+                  window.close();
+                </script>
+              </body>
+            </html>";
+            return Content(htmlResponse, "text/html");
+            //return StatusCode(int.Parse(token.Status), token.Data);
         }
     }
 }
