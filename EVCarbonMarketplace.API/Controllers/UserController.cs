@@ -39,7 +39,6 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _userService.GetAllUsers(page, size,role);
             return StatusCode(int.Parse(response.Status), response);
         }
-        [Authorize(Roles = "Admin")]
         [HttpGet(ApiEndPointConstant.User.GetUser)]
         [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status400BadRequest)]
