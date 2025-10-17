@@ -73,6 +73,7 @@
             public const string GetByEVehicle = CarbonEmission + "/by-EVehicle/{Id}";
             public const string Create = CarbonEmission + "/by-EVehicle/{Id}";
             public const string ApproveEmission = CarbonEmission + "/{id}/approve";
+            public const string Delete = CarbonEmission + "/{id}";
         }
         public static class CarbonCredits
         {

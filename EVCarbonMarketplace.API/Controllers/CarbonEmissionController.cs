@@ -61,6 +61,15 @@ namespace EVCarbonMarketplace.API.Controllers
             return StatusCode(StatusCodes.Status200OK, response);
         }
 
-
-    }
+        [Authorize(Roles = "Admin,Cva")]
+        [HttpDelete(ApiEndPointConstant.CarbonEmissions.Delete)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> DeleteEmission([FromRoute] Guid id)
+        {
+            var response = await _carbonEmissionService.DeleteEmission(id);
+            return StatusCode(StatusCodes.Status200OK, response);
+        }
+        }
 }

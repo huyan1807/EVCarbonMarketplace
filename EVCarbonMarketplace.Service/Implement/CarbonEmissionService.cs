@@ -37,6 +37,10 @@ namespace EVCarbonMarketplace.Service.Implement
                 )
                 ?? throw new NotFoundException("Không tìm thấy phát thải");
 
+            var vehicle = await _unitOfWork.GetRepository<ElectricVehicle>()
+                .SingleOrDefaultAsync(predicate: x => x.Id == emission.ElectricVehicleId && x.IsActive == true)
+                ?? throw new NotFoundException("Không tìm thấy xe điện");
+
             if (emission.Status != CarbonEmissionEnum.Pending.ToString())
             {
                 throw new BadHttpRequestException("Chỉ có thể phê duyệt hoặc từ chối các phát thải đang chờ xử lý");
@@ -94,6 +98,29 @@ namespace EVCarbonMarketplace.Service.Implement
                     Status = emission.Status,
 
                 }
+            };
+        }
+
+        public async Task<BaseResponse<bool>> DeleteEmission(Guid id)
+        {
+            var emission = await _unitOfWork.GetRepository<CarbonEmission>()
+                .SingleOrDefaultAsync(
+                predicate: x => x.Id == id && x.IsActive == true
+                )
+                ?? throw new NotFoundException("Không tìm thấy phát thải");
+
+            emission.IsActive = false;
+            emission.DeleteAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<CarbonEmission>().UpdateAsync(emission);
+
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+            if (!isSuccess) throw new Exception("Có lỗi trong quá trình xóa phát thải ");
+
+            return new BaseResponse<bool>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Xóa phát thải thành công",
+                Data = true
             };
         }
 

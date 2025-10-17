@@ -21,5 +21,7 @@ namespace EVCarbonMarketplace.Service.Interface
 
         Task<BaseResponse<CarbonEmissionResponse>> ApproveEmission(Guid id ,CarbonEmissionEnum status);
 
+        Task<BaseResponse<bool>> DeleteEmission(Guid id);
+
     }
 }

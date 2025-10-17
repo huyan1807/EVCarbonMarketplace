@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EVCarbonMarketplace.Model.Entity;
+using EVCarbonMarketplace.Model.Enum;
 using EVCarbonMarketplace.Model.Exceptions;
 using EVCarbonMarketplace.Model.Paginate;
 using EVCarbonMarketplace.Model.Payload.Request.ElectricVehicle;
@@ -95,6 +96,10 @@ namespace EVCarbonMarketplace.Service.Implement
             var EVehicle = await _unitOfWork.GetRepository<ElectricVehicle>().SingleOrDefaultAsync(
                 predicate: x => x.Id == id && x.IsActive == true
                 ) ?? throw new NotFoundException("Không tìm thấy xe điện");
+            var credit = await _unitOfWork.GetRepository<CarbonEmission>().SingleOrDefaultAsync(
+                predicate: x => x.ElectricVehicleId == id && x.IsActive == true && x.Status.Equals(CarbonEmissionEnum.Approved.ToString())
+                );
+            if (credit != null) throw new NotFoundException("Không thể xóa xe điện đã phát sinh tín chỉ carbon");
             EVehicle.IsActive = false;
             EVehicle.DeleteAt = TimeUtil.GetCurrentSEATime();
             _unitOfWork.GetRepository<ElectricVehicle>().UpdateAsync(EVehicle);

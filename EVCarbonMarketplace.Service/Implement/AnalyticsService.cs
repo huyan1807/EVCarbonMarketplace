@@ -40,8 +40,9 @@ namespace EVCarbonMarketplace.Service.Implement
 
                 // 2. Phân loại
                 var purchaseTransactions = transactions
-                    .Where(t => t.Type == TransactionEnum.Purchase.ToString())
+                    .Where(t => t.Type == TransactionEnum.Sale.ToString())
                     .ToList();
+               
 
                 // Auction: gom theo listing, chỉ lấy Winner với tổng amount
                 var auctionTransactions = transactions
