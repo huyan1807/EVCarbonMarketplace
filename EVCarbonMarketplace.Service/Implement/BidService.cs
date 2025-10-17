@@ -107,12 +107,12 @@ namespace EVCarbonMarketplace.Service.Implement
             {
                 if (t.BuyerId == highestBid.AccountId)
                 {
-                    t.Status = "Success";
+                    t.Status = TransactionStatusEnum.Success.ToString();
                     t.FeeRate = feeRate;    
                 }
                 else
                 {
-                    t.Status = "Fail";
+                    t.Status = TransactionStatusEnum.Fail.ToString();
 
                     var loserWallet = loserWallets.FirstOrDefault(w => w.AccountId == t.BuyerId);
                     if (loserWallet != null)
@@ -123,6 +123,22 @@ namespace EVCarbonMarketplace.Service.Implement
                 }
                 t.UpdateAt = TimeUtil.GetCurrentSEATime();
             }
+            var sellerTransaction = new Transaction
+            {
+                Id = Guid.NewGuid(),
+                WalletId = sellerWallet.Id,
+                BuyerId = highestBid.AccountId,
+                SellerId = listing.AccountId,
+                CarbonListingId = listing.Id,
+                Amount = sellerReceive,
+                Description = "Nhận tiền bán đấu giá tín chỉ carbon",
+                CreateAt = TimeUtil.GetCurrentSEATime(),
+                Type = TransactionEnum.Sale.ToString(),
+                Status = TransactionStatusEnum.Success.ToString(),
+                FeeRate = feeRate,
+                IsActive = true
+            };
+            await _unitOfWork.GetRepository<Transaction>().InsertAsync(sellerTransaction);
             listing.CarbonCredit.AccountId = highestBid.AccountId;
             listing.CarbonCredit.UpdateAt = TimeUtil.GetCurrentSEATime();
             listing.CarbonCredit.Status = CarbonCreditEnum.Available.ToString();
@@ -268,7 +284,8 @@ namespace EVCarbonMarketplace.Service.Implement
                 CreateAt = now,
                 Type = TransactionEnum.Auction.ToString(),
                 Status = "Hold",
-                IsActive = true
+                IsActive = true,
+                FeeRate = 0
             };
             await _unitOfWork.GetRepository<Transaction>().InsertAsync(holdTransaction);
 

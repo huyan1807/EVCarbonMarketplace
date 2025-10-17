@@ -37,7 +37,8 @@ namespace EVCarbonMarketplace.Service.Implement
                     Status = s.Status,
                     Amount = s.Amount,
                     CreateAt = s.CreateAt,
-                    Description = s.Description
+                    Description = s.Description,
+                    FeeRate = s.FeeRate
                 },
 
 
@@ -75,7 +76,9 @@ namespace EVCarbonMarketplace.Service.Implement
             Status = s.Status,
             Amount = s.Amount,
             CreateAt = s.CreateAt,
-            Description = s.Description
+            Description = s.Description,
+            FeeRate = s.FeeRate
+
         },
 
 
@@ -108,7 +111,8 @@ namespace EVCarbonMarketplace.Service.Implement
                 include: i => i.Include(c => c.CarbonCredit).ThenInclude(e => e.CarbonEmission).Include(a => a.Account)
             );
             if (listing == null) throw new NotFoundException("Không tìm thấy tín chỉ");
-
+            if (listing.AccountId == accountId)
+                throw new BadHttpRequestException("Bạn không thể mua tín chỉ của chính mình");
             var buyerWallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
                 predicate: x => x.AccountId == accountId && x.IsActive == true
                 ) ?? throw new NotFoundException("Không tìm thấy ví người mua");
@@ -147,7 +151,7 @@ namespace EVCarbonMarketplace.Service.Implement
             credit.Status = CarbonCreditEnum.Available.ToString();
 
 
-            var transaction = new Transaction
+            var buyerTransaction = new Transaction
             {
                 WalletId = buyerWallet.Id,
                 Id = Guid.NewGuid(),
@@ -158,23 +162,39 @@ namespace EVCarbonMarketplace.Service.Implement
                 CreateAt = TimeUtil.GetCurrentSEATime(),
                 Description = "Mua tín chỉ carbon",
                 Type = TransactionEnum.Purchase.ToString(),
-                Status = "Success",
+                Status = TransactionStatusEnum.Success.ToString(),
+                IsActive = true,
+                FeeRate = 0,
+            };
+            await _unitOfWork.GetRepository<Transaction>().InsertAsync(buyerTransaction);
+            var sellerTransaction = new Transaction
+            {
+                WalletId = sellerWallet.Id,
+                Id = Guid.NewGuid(),
+                BuyerId = accountId,
+                SellerId = listing.AccountId,
+                CarbonListingId = listing.Id,
+                Amount = sellerReceive,
+                CreateAt = TimeUtil.GetCurrentSEATime(),
+                Description = "Bán tín chỉ carbon",
+                Type = TransactionEnum.Sale.ToString(),
+                Status = TransactionStatusEnum.Success.ToString(),
                 IsActive = true,
                 FeeRate = feeRate,
             };
-            await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
+            await _unitOfWork.GetRepository<Transaction>().InsertAsync(sellerTransaction);
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
             if (!isSuccess) throw new Exception("Có lỗi trong quá trình giao dịch");
             var response = new TransactionResponse
             {
-                Id = transaction.Id,
+                Id = buyerTransaction.Id,
                 ListingId = listing.Id,
-                Status = transaction.Status,
-                Amount = transaction.Amount.Value,
+                Status = buyerTransaction.Status,
+                Amount = buyerTransaction.Amount.Value,
                 Credits = listing.CarbonCredit.Credits.Value,
-                CreateAt = transaction.CreateAt.Value,
+                CreateAt = buyerTransaction.CreateAt.Value,
 
-                Type = transaction.Type,
+                Type = buyerTransaction.Type,
                 Price = listing.Price,
 
                 BuyerId = accountId.Value,

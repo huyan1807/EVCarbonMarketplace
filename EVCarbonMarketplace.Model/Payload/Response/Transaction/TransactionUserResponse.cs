@@ -17,5 +17,7 @@ namespace EVCarbonMarketplace.Model.Payload.Response.Transaction
         public decimal? Amount { get; set; }
         public DateTime? CreateAt { get; set; }
         public string? Description { get; set; }
+        public decimal? FeeRate { get; set; }
+
     }
 }

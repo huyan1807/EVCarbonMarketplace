@@ -44,8 +44,8 @@ namespace EVCarbonMarketplace.Service.Implement
 
             if(status.ToString().Equals(CarbonEmissionEnum.Approved.ToString()))
             {
-                var credit = (emission.Co2reduced ?? 0) / 1000;
-
+                //
+                var credit = Math.Ceiling(((emission.Co2reduced ?? 0) / 1000m) * 100) / 100;
                 var carbonCredit = new CarbonCredit
                 {
                     Id = Guid.NewGuid(),

@@ -11,6 +11,7 @@ namespace EVCarbonMarketplace.Model.Enum
         Deposit,
         Withdraw,
         Purchase,
-        Auction
+        Auction,
+        Sale
     }
 }
