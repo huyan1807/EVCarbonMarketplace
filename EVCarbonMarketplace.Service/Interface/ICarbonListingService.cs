@@ -23,7 +23,6 @@ namespace EVCarbonMarketplace.Service.Interface
         Task<BaseResponse<CarbonListingDetailResponse>> GetById(Guid id);
 
         Task<BaseResponse<CarbonListingResponse>> Update(Guid id, CarbonListingUpdateRequest request);
-
-
+        Task<BaseResponse<bool>> FinalizeListingExpiration(Guid listingId);
     }
 }

@@ -144,6 +144,7 @@ namespace EVCarbonMarketplace.Service.Implement
              ?? throw new NotFoundException("Không tìm thấy tín chỉ");
             credit.AccountId = accountId;
             credit.UpdateAt = TimeUtil.GetCurrentSEATime();
+            credit.Status = CarbonCreditEnum.Available.ToString();
 
 
             var transaction = new Transaction

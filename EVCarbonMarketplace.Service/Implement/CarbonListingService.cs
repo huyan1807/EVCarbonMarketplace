@@ -51,6 +51,9 @@ namespace EVCarbonMarketplace.Service.Implement
             sellerWallet.CarbonUnit -= carbonCredit.Credits;
             sellerWallet.UpdateAt = TimeUtil.GetCurrentSEATime();
             _unitOfWork.GetRepository<Wallet>().UpdateAsync(sellerWallet);
+            carbonCredit.UpdateAt = TimeUtil.GetCurrentSEATime();
+            carbonCredit.Status = CarbonCreditEnum.Listed.ToString();
+            _unitOfWork.GetRepository<CarbonCredit>().UpdateAsync(carbonCredit);
             var CarbonLT = _mapper.Map<CarbonListing>(request);
             CarbonLT.AccountId = accountId;
             CarbonLT.Type = type.ToString();
@@ -94,6 +97,36 @@ namespace EVCarbonMarketplace.Service.Implement
 
         }
 
+        public async Task<BaseResponse<bool>> FinalizeListingExpiration(Guid listingId)
+        {
+
+            var listing = await _unitOfWork.GetRepository<CarbonListing>().SingleOrDefaultAsync(
+                predicate: x => x.Id == listingId
+                             && x.IsActive == true
+                             && x.Status == CarbonListingEnum.ListingStatus.Active.ToString(),
+                include: i => i.Include(c => c.CarbonCredit)
+                               .ThenInclude(e => e.CarbonEmission)
+                               .Include(a => a.Account)
+            ) ?? throw new NotFoundException("Không tìm thấy bài đăng");
+
+            if (listing.EndTime > TimeUtil.GetCurrentSEATime())
+                throw new BadHttpRequestException("Bài đăng chưa hết hạn");
+
+            listing.Status = CarbonListingEnum.ListingStatus.Expired.ToString();
+            listing.UpdateAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<CarbonListing>().UpdateAsync(listing);
+
+            var ok = await _unitOfWork.CommitAsync() > 0;
+            if (!ok) throw new Exception("Có lỗi trong quá trình hết hạn bài đăng");
+
+            return new BaseResponse<bool>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Kết thúc bài đăng (Expired) thành công",
+                Data = true
+            };
+        }
+
         public async Task<BaseResponse<IPaginate<CarbonListingManagerResponse>>> GetAll(int page, int size, CarbonListingEnum.ListingType? type, CarbonListingEnum.ListingStatus? status)
         {
             if (page <= 0 || size <= 0) throw new BadHttpRequestException("Trang và kích thước trang phải lớn hơn 0");
@@ -119,7 +152,7 @@ namespace EVCarbonMarketplace.Service.Implement
 
                 predicate: x => x.IsActive == true
                 && ((type == null || x.Type.ToLower() == type.ToString().ToLower())
-                && (status == null || x.Status.ToLower() == status.ToString().ToLower())),
+                && (status == null || x.Status.ToLower() == status.ToString().ToLower())) && x.EndTime > TimeUtil.GetCurrentSEATime(),
                 include: source => source.Include(x => x.Account).Include(x => x.CarbonCredit).ThenInclude(x => x.CarbonEmission).ThenInclude(x => x.ElectricVehicle),
                 page: page,
                 size: size
@@ -167,7 +200,7 @@ namespace EVCarbonMarketplace.Service.Implement
                    VehicleImage = x.CarbonCredit.CarbonEmission.ElectricVehicle.ImageUrl
                },
 
-               predicate: x => x.IsActive == true ,
+               predicate: x => x.IsActive == true && x.Id.Equals(id),
                include: source => source.Include(x => x.Account).Include(x => x.CarbonCredit).ThenInclude(x => x.CarbonEmission).ThenInclude(x => x.ElectricVehicle)
 
                );

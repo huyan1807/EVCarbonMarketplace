@@ -125,6 +125,7 @@ namespace EVCarbonMarketplace.Service.Implement
             }
             listing.CarbonCredit.AccountId = highestBid.AccountId;
             listing.CarbonCredit.UpdateAt = TimeUtil.GetCurrentSEATime();
+            listing.CarbonCredit.Status = CarbonCreditEnum.Available.ToString();
             _unitOfWork.GetRepository<CarbonCredit>().UpdateAsync(listing.CarbonCredit);
 
             _unitOfWork.GetRepository<Wallet>().UpdateRange(

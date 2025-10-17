@@ -34,6 +34,8 @@ namespace EVCarbonMarketplace.Service.Implement
                     {
                         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork<EvcarbonMarketplaceContext>>();
                         var bidService = scope.ServiceProvider.GetRequiredService<IBidService>();
+                        var listingService = scope.ServiceProvider.GetRequiredService<ICarbonListingService>();
+
 
                         var now = TimeUtil.GetCurrentSEATime();
                         _logger.LogInformation("[AuctionBackgroundService] Tick at {time}", now);
@@ -41,15 +43,27 @@ namespace EVCarbonMarketplace.Service.Implement
                         var listings = await unitOfWork.GetRepository<CarbonListing>()
                             .GetListAsync(predicate: x =>
                                 x.Status == CarbonListingEnum.ListingStatus.Active.ToString()
-                                && x.IsActive == true);
+                                && x.IsActive == true && x.EndTime <= now);
 
                         foreach (var listing in listings)
                         {
-                           
-                            if (listing.EndTime <= now)
+
+                            try
                             {
-                                await bidService.FinalizeAuction(listing.Id);
-                                _logger.LogInformation($"[AuctionBackgroundService] Đã kết thúc đấu giá Listing {listing.Id}");
+                                if (listing.Type == CarbonListingEnum.ListingType.Auction.ToString())
+                                {
+                                    await bidService.FinalizeAuction(listing.Id);
+                                    _logger.LogInformation("[ListingAutoFinalize] Auction finalized: {id}", listing.Id);
+                                }
+                                else
+                                {
+                                    await listingService.FinalizeListingExpiration(listing.Id);
+                                    _logger.LogInformation("[ListingAutoFinalize] Listing expired: {id}", listing.Id);
+                                }
+                            }
+                            catch (Exception exItem)
+                            {
+                                _logger.LogError(exItem, "[ListingAutoFinalize] Error finalizing listing {id}", listing.Id);
                             }
                         }
                     }
