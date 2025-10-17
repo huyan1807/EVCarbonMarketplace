@@ -39,7 +39,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _carbonListingService.GetAll(page, size, type, status);
             return StatusCode(StatusCodes.Status200OK, response);
         }
-        [Authorize(Roles = "Admin,Cva")]
+        [Authorize(Roles = "Admin,Cva,EvOwner")]
         [HttpDelete(ApiEndPointConstant.CarbonListing.Delete)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
