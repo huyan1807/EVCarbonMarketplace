@@ -176,7 +176,7 @@ namespace EVCarbonMarketplace.Service.Implement
                    Gender = u.Gender,
                    UserName = u.Username,
                },
-               predicate: u => u.IsActive == true && u.Role.Equals(role.ToString()),
+               predicate: u => u.IsActive == true && (role == null || u.Role == role.ToString()),
                orderBy: u => u.OrderByDescending(u => u.CreateAt),
                page: page,
                size: size);
