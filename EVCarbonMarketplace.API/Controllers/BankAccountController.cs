@@ -18,7 +18,7 @@ namespace EVCarbonMarketplace.API.Controllers
         {
             _bankAccountService = bankAccountService;
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "EvOwner,CcBuyer,Cva")]
         [HttpPost(ApiEndPointConstant.BankAccount.Create)]
         [ProducesResponseType(typeof(BaseResponse<BankAccountResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<BankAccountResponse>), StatusCodes.Status400BadRequest)]
@@ -55,7 +55,7 @@ namespace EVCarbonMarketplace.API.Controllers
             var result = await _bankAccountService.GetDefaultBankAccount();
             return StatusCode(int.Parse(result.Status), result);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "EvOwner,CcBuyer,Cva")]
         [HttpDelete(ApiEndPointConstant.BankAccount.Delete)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status400BadRequest)]
