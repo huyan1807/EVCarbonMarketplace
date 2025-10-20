@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EVCarbonMarketplace.Model.Enum;
+using EVCarbonMarketplace.Model.Payload.Request.Notification;
 
 namespace EVCarbonMarketplace.Service.Implement
 {
@@ -32,13 +33,15 @@ namespace EVCarbonMarketplace.Service.Implement
         private readonly PayOSSettings _payOSSettings;
         private readonly IConnectionMultiplexer _redis;
         private readonly IEmailSender _emailSender;
+        private readonly INotificationService _notificationService;
         public PaymentService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<PaymentService> logger,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
             IConfiguration config,
             IConnectionMultiplexer redis,
             IOptions<PayOSSettings> payOSSettings,
-            IEmailSender emailSender
+            IEmailSender emailSender,
+            INotificationService notificationService
             ) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
             _config = config;
@@ -46,6 +49,7 @@ namespace EVCarbonMarketplace.Service.Implement
             _payOS = new PayOS(_payOSSettings.ClientId, _payOSSettings.ApiKey, _payOSSettings.ChecksumKey);
             _redis = redis;
             _emailSender = emailSender;
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse<string>> Create(PaymentRequest request)
@@ -195,6 +199,15 @@ namespace EVCarbonMarketplace.Service.Implement
                         Subject = $"Xác nhận nạp tiền thành công - Giao dịch #{transaction.Id.ToString().Substring(0, 8)}"
                     };
                     await _emailSender.SendEmailAsync(emailMessage);
+
+                    await _notificationService.Create(new NotificationRequest
+                    {
+                        UserId = accountId.ToString(),
+                        Title = "Nạp tiền thành công",
+                        Body = $"Bạn đã nạp thành công {amount:N0} VND vào ví của mình.",
+                        Type = NotificationType.Deposit.ToString(),
+                        IsRead = false,
+                    });
 
                     return new BaseResponse<string>
                     {

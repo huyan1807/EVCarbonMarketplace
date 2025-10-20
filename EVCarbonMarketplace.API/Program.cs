@@ -40,6 +40,7 @@ builder.Services.AddCloudinary(builder.Configuration);
 builder.Services.AddRedis(builder.Configuration);
 builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 builder.Services.AddFirebaseStorage(builder.Configuration);
+builder.Services.AddFirestore(builder.Configuration);
 
 builder.Services.Configure<PayOSSettings>(builder.Configuration.GetSection("PayOS"));
 builder.Services.AddHostedService<AuctionBackgroundService>();

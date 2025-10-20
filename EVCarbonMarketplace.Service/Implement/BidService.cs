@@ -20,13 +20,16 @@ using System.Reflection;
 using Microsoft.Identity.Client;
 using EVCarbonMarketplace.Model.Paginate;
 using EVCarbonMarketplace.Model.Payload.Request.Bid;
+using EVCarbonMarketplace.Model.Payload.Request.Notification;
 
 namespace EVCarbonMarketplace.Service.Implement
 {
     public class BidService : BaseService<BidService>, IBidService
     {
-        public BidService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<BidService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        private readonly INotificationService _notificationService;
+        public BidService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<BidService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, INotificationService notificationService) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse<BidResponse>> FinalizeAuction(Guid listingId)
@@ -58,6 +61,13 @@ namespace EVCarbonMarketplace.Service.Implement
                 _unitOfWork.GetRepository<Wallet>().UpdateAsync(sellerWallet);
                 var iSuccesss = await _unitOfWork.CommitAsync() > 0;
                 if (!iSuccesss) throw new Exception("Có lỗi trong quá trình kết thúc đấu giá");
+                await _notificationService.Create(new NotificationRequest
+                {
+                    UserId = listing.AccountId.ToString(),
+                    Title = "Đấu giá kết thúc: Không có người tham gia",
+                    Body = $"Đấu giá đã hết hạn. {listing.CarbonCredit.Credits} tín chỉ carbon đã được hoàn về ví của bạn.",
+                    Type = NotificationType.Expired.ToString()
+                });
                 return new BaseResponse<BidResponse>
                 {
                     Status = StatusCodes.Status200OK.ToString(),
@@ -154,6 +164,34 @@ namespace EVCarbonMarketplace.Service.Implement
 
             var iSuccess = await _unitOfWork.CommitAsync() > 0;
             if (!iSuccess) throw new Exception("Có lỗi trong quá trình kết thúc đấu giá");
+            await _notificationService.Create(new NotificationRequest
+            {
+                UserId = highestBid.AccountId.ToString(),
+                Title = "Chúc mừng! Bạn đã thắng đấu giá",
+                Body = $"Bạn đã thắng đấu giá với giá {highestBid.Price:n0}. " +
+              $"{listing.CarbonCredit.Credits} tín chỉ carbon đã được cộng vào ví của bạn.",
+                Type = NotificationType.Auction.ToString()
+            });
+
+            await _notificationService.Create(new NotificationRequest
+            {
+                UserId = listing.AccountId.ToString(),
+                Title = "Đã bán tín chỉ carbon thành công",
+                Body = $"Đã được bán với giá {highestBid.Price:n0}. " +
+                       $"Sau khi trừ phí {feeRate}% ({feeAmount:n0}), bạn nhận được {sellerReceive:n0} vào ví.",
+                Type = NotificationType.Sale.ToString()
+            });
+            foreach (var loser in loserWallets)
+            {
+                await _notificationService.Create(new NotificationRequest
+                {
+                    UserId = loser.AccountId.ToString(),
+                    Title = "Bạn không thắng đấu giá",
+                    Body = $"Đã có người thắng khác. " +
+                           $"Tiền đặt cược của bạn đã được hoàn về ví.",
+                    Type = NotificationType.Auction.ToString()
+                });
+            }
             return new BaseResponse<BidResponse>
             {
                 Status = StatusCodes.Status200OK.ToString(),
@@ -291,6 +329,36 @@ namespace EVCarbonMarketplace.Service.Implement
 
             var iSuccess = await _unitOfWork.CommitAsync() > 0;
             if (!iSuccess) throw new Exception("Có lỗi trong quá trình đấu giá");
+            await _notificationService.Create(new NotificationRequest
+            {
+                UserId = accountId.ToString(),
+                Title = "Đặt giá thành công",
+                Body = previousPrice > 0
+          ? $"Bạn đã nâng giá từ {previousPrice:N0} lên {request.Price:N0}"
+          : $"Bạn đã đặt giá {request.Price:N0}. Số tiền {requiredHold:N0} VND đã được giữ tạm thời.",
+                Type = NotificationType.Auction.ToString()
+            });
+
+            // 2) Cho chủ listing (có giá thầu mới)
+            await _notificationService.Create(new NotificationRequest
+            {
+                UserId = listing.AccountId.ToString(),
+                Title = "Có giá thầu mới",
+                Body = $"Vừa nhận giá {request.Price:N0} từ {account.FullName}.",
+                Type = NotificationType.Auction.ToString()
+            });
+
+            // 3) Cho người đang dẫn trước trước đó (bị vượt giá), nếu có và khác người đặt
+            if (previousBid != null && previousBid.AccountId != accountId)
+            {
+                await _notificationService.Create(new NotificationRequest
+                {
+                    UserId = previousBid.AccountId.ToString(),
+                    Title = "Bạn đã bị vượt giá",
+                    Body = $"Có người đã đặt {request.Price:N0} cao hơn giá của bạn {previousBid.Price:N0}. Hãy tăng giá nếu bạn vẫn muốn thắng.",
+                    Type = NotificationType.Auction.ToString()
+                });
+            }
 
             return new BaseResponse<BidResponse>
             {

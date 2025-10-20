@@ -16,13 +16,16 @@ using System.Text;
 using System.Threading.Tasks;
 using EVCarbonMarketplace.Model.Enum;
 using EVCarbonMarketplace.Model.Paginate;
+using EVCarbonMarketplace.Model.Payload.Request.Notification;
 
 namespace EVCarbonMarketplace.Service.Implement
 {
     public class TransactionService : BaseService<TransactionService>, ITransactionService
     {
-        public TransactionService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<TransactionService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        private readonly INotificationService _notificationService;
+        public TransactionService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<TransactionService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, INotificationService notificationService) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse<IPaginate<TransactionUserResponse>>> GetAll(int page, int size, TransactionEnum? type, TransactionStatusEnum? status)
@@ -185,6 +188,23 @@ namespace EVCarbonMarketplace.Service.Implement
             await _unitOfWork.GetRepository<Transaction>().InsertAsync(sellerTransaction);
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
             if (!isSuccess) throw new Exception("Có lỗi trong quá trình giao dịch");
+            // Send notification to seller
+            await _notificationService.Create( new NotificationRequest
+            {
+                Body = $"Tín chỉ carbon của bạn đã được bán thành công cho {account.FullName}.",
+                Title = "Bán tín chỉ carbon thành công",
+                Type = NotificationType.Purchase.ToString(),
+                UserId = listing.AccountId.ToString(),                              
+            });
+            // Send notification to buyer
+            await _notificationService.Create(new NotificationRequest
+            {
+                Body = $"Bạn đã mua thành công tín chỉ carbon từ {listing.Account.FullName}.",
+                Title = "Mua tín chỉ carbon thành công",
+                Type = NotificationType.Sale.ToString(),
+                UserId = accountId.ToString(),
+            });
+
             var response = new TransactionResponse
             {
                 Id = buyerTransaction.Id,

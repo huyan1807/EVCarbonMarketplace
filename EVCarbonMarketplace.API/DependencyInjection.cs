@@ -19,6 +19,8 @@ using EVCarbonMarketplace.Model.Payload.Settings;
 using System.Text;
 using FirebaseAdmin;
 using Google.Cloud.Storage.V1;
+using Google.Cloud.Firestore;
+using Microsoft.Extensions.Options;
 namespace EVCarbonMarketplace.API
 {
     public static class DependencyInjection
@@ -134,6 +136,7 @@ namespace EVCarbonMarketplace.API
             services.AddScoped<IAnalyticsService, AnalyticsService>();
             services.AddScoped<ISystemSettingService, SystemSettingService>();
             services.AddScoped<ICertificateService, CertificateService>();
+            services.AddScoped<INotificationService, NotificationService>();
 
 
 
@@ -215,6 +218,37 @@ namespace EVCarbonMarketplace.API
 
             services.Configure<FirebaseSettings>(configuration.GetSection("Firebase"));
             services.AddSingleton(storageClient);
+
+            return services;
+        }
+        public static IServiceCollection AddFirestore(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Lấy settings chung
+            services.Configure<FirebaseSettings>(configuration.GetSection("Firebase"));
+
+            services.AddSingleton(sp =>
+            {
+                var opt = sp.GetRequiredService<IOptions<FirebaseSettings>>().Value;
+
+                if (string.IsNullOrWhiteSpace(opt.ProjectId))
+                    throw new InvalidOperationException("Firebase:ProjectId is missing.");
+                    
+                // Resolve CredentialPath giống AddFirebaseStorage
+                var credPath = opt.CredentialPath;
+                if (!File.Exists(credPath))
+                    credPath = Path.Combine(Directory.GetCurrentDirectory(), credPath);
+                if (!File.Exists(credPath))
+                    throw new FileNotFoundException("Không tìm thấy file Firebase credentials", credPath);
+
+                var credential = GoogleCredential.FromFile(credPath);
+
+                // Tạo FirestoreDb với credential
+                return new FirestoreDbBuilder
+                {
+                    ProjectId = opt.ProjectId,
+                    Credential = credential
+                }.Build();
+            });
 
             return services;
         }

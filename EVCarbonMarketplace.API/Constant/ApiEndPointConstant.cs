@@ -194,5 +194,14 @@
             public const string Delete = CertificateEndPoint + "/{id}";
 
         }
+
+        public static class Notification
+        {
+            public const string NotificationEndPoint = ApiEndpoint + "/notification";
+            public const string Delete = NotificationEndPoint + "/{id}";
+            public const string MarkRead = NotificationEndPoint + "/{id}/read";
+            public const string MarkAllRead = NotificationEndPoint + "/mark-all-read";
+
+        }
     }
 }

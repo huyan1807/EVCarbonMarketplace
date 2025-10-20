@@ -8,6 +8,7 @@ namespace EVCarbonMarketplace.Model.Payload.Settings
 {
     public class FirebaseSettings
     {
+        public string ProjectId { get; set; }
         public string CredentialPath { get; set; }
         public string Bucket { get; set; }
     }
