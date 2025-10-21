@@ -249,9 +249,13 @@ namespace EVCarbonMarketplace.Service.Implement
 
             decimal totalDistance = records.Sum(r => r.DistanceTravelled);
             decimal totalEnergy = records.Sum(r => r.EnergyConsumed);
+            var EmissionICE = await _unitOfWork.GetRepository<SystemSetting>()
+           .SingleOrDefaultAsync(predicate: s => s.Key == "EmissionFactorICE");
+            var EmissionElectricity = await _unitOfWork.GetRepository<SystemSetting>()
+            .SingleOrDefaultAsync(predicate: s => s.Key == "EmissionFactorEV");
 
-            const decimal EmissionFactorICE = 0.12m;     
-            const decimal EmissionFactorElectricity = 0.5m; 
+            decimal EmissionFactorICE = decimal.Parse(EmissionICE.Value);     
+            decimal EmissionFactorElectricity = decimal.Parse(EmissionElectricity.Value); 
 
             var co2ICE = totalDistance * EmissionFactorICE;
             var co2EV = totalEnergy * EmissionFactorElectricity;

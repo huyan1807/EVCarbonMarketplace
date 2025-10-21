@@ -275,6 +275,8 @@ namespace EVCarbonMarketplace.Service.Implement
             //{
             //    throw new BadHttpRequestException($"Giá khởi điểm là {listing.Price:N0}, bạn phải đặt giá cao hơn hoặc bằng.");
             //}
+            var previousLeader = highestBid.OrderByDescending(x => x.Price).FirstOrDefault();
+
             if (highestBid.Any() && request.Price <= highestBid.Max(x => x.Price))
             {
                 throw new BadHttpRequestException("Giá bạn đặt phải cao hơn giá hiện tại.");
@@ -349,13 +351,13 @@ namespace EVCarbonMarketplace.Service.Implement
             });
 
             // 3) Cho người đang dẫn trước trước đó (bị vượt giá), nếu có và khác người đặt
-            if (previousBid != null && previousBid.AccountId != accountId)
+            if (previousLeader != null && previousLeader.AccountId != accountId)
             {
                 await _notificationService.Create(new NotificationRequest
                 {
-                    UserId = previousBid.AccountId.ToString(),
+                    UserId = previousLeader.AccountId.ToString(),
                     Title = "Bạn đã bị vượt giá",
-                    Body = $"Có người đã đặt {request.Price:N0} cao hơn giá của bạn {previousBid.Price:N0}. Hãy tăng giá nếu bạn vẫn muốn thắng.",
+                    Body = $"Có người đã đặt {request.Price:N0} cao hơn giá của bạn {previousLeader.Price:N0}. Hãy tăng giá nếu bạn vẫn muốn thắng.",
                     Type = NotificationType.Auction.ToString()
                 });
             }

@@ -180,8 +180,9 @@
         public static class SystemSetting
         {
             public const string SystemSettingEndPoint = ApiEndpoint + "/system-setting";
-            public const string GetTransactionFee = SystemSettingEndPoint + "/transaction-fee";
-            public const string UpdateTransactionFee = SystemSettingEndPoint + "/transaction-fee";
+            public const string GetAll = SystemSettingEndPoint;
+            public const string Update = SystemSettingEndPoint;
+
         }
 
         public static class Certificate
