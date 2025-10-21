@@ -1,7 +1,19 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+﻿# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER root
+
+# Cài wkhtmltopdf + libwkhtmltox + deps + fonts tiếng Việt
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl \
+    libxrender1 libxext6 libfontconfig1 libfreetype6 libjpeg62-turbo zlib1g \
+    fonts-dejavu fonts-noto && \
+    curl -fL -o /tmp/wk.deb \
+      https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb && \
+    apt-get install -y /tmp/wk.deb && \
+    ldconfig && \
+    rm -rf /var/lib/apt/lists/* /tmp/wk.deb
 USER app
 WORKDIR /app
 EXPOSE 8080

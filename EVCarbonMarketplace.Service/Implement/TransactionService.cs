@@ -191,7 +191,7 @@ namespace EVCarbonMarketplace.Service.Implement
             // Send notification to seller
             await _notificationService.Create( new NotificationRequest
             {
-                Body = $"Tín chỉ carbon của bạn đã được bán thành công cho {account.FullName}.",
+                Body = $"Tín chỉ carbon của bạn đã được bán thành công",
                 Title = "Bán tín chỉ carbon thành công",
                 Type = NotificationType.Purchase.ToString(),
                 UserId = listing.AccountId.ToString(),                              
@@ -199,7 +199,7 @@ namespace EVCarbonMarketplace.Service.Implement
             // Send notification to buyer
             await _notificationService.Create(new NotificationRequest
             {
-                Body = $"Bạn đã mua thành công tín chỉ carbon từ {listing.Account.FullName}.",
+                Body = $"Bạn đã mua thành công tín chỉ carbon",
                 Title = "Mua tín chỉ carbon thành công",
                 Type = NotificationType.Sale.ToString(),
                 UserId = accountId.ToString(),

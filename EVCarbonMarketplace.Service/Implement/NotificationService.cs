@@ -29,15 +29,12 @@ namespace EVCarbonMarketplace.Service.Implement
         {
             try
             {
-                // đảm bảo có UserId
                 if (string.IsNullOrEmpty(request.UserId))
                     throw new ArgumentException("UserId không được để trống");
 
-                // đặt giá trị mặc định
                 request.IsRead = false;
                 request.CreatedAt = Timestamp.FromDateTime(TimeUtil.GetCurrentSEATime().ToUniversalTime());
 
-                // Ghi vào Firestore
                 var col = _firestore.Collection("notifications");
                 await col.AddAsync(request);
 

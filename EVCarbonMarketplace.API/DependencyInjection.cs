@@ -223,7 +223,6 @@ namespace EVCarbonMarketplace.API
         }
         public static IServiceCollection AddFirestore(this IServiceCollection services, IConfiguration configuration)
         {
-            // Lấy settings chung
             services.Configure<FirebaseSettings>(configuration.GetSection("Firebase"));
 
             services.AddSingleton(sp =>
@@ -233,7 +232,6 @@ namespace EVCarbonMarketplace.API
                 if (string.IsNullOrWhiteSpace(opt.ProjectId))
                     throw new InvalidOperationException("Firebase:ProjectId is missing.");
                     
-                // Resolve CredentialPath giống AddFirebaseStorage
                 var credPath = opt.CredentialPath;
                 if (!File.Exists(credPath))
                     credPath = Path.Combine(Directory.GetCurrentDirectory(), credPath);
@@ -242,7 +240,6 @@ namespace EVCarbonMarketplace.API
 
                 var credential = GoogleCredential.FromFile(credPath);
 
-                // Tạo FirestoreDb với credential
                 return new FirestoreDbBuilder
                 {
                     ProjectId = opt.ProjectId,
