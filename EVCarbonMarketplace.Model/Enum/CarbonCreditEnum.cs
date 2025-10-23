@@ -9,6 +9,6 @@ namespace EVCarbonMarketplace.Model.Enum
     public enum CarbonCreditEnum
     {
         Available,
-        Listed
+        Listed,
     }
 }

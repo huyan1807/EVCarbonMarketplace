@@ -55,6 +55,12 @@ namespace EVCarbonMarketplace.Service.Implement
                 listing.UpdateAt = TimeUtil.GetCurrentSEATime();
                 _unitOfWork.GetRepository<CarbonListing>().UpdateAsync(listing);
 
+                var carboncredit = listing.CarbonCredit;
+                carboncredit.Status = CarbonCreditEnum.Available.ToString();
+                carboncredit.UpdateAt = TimeUtil.GetCurrentSEATime();
+                _unitOfWork.GetRepository<CarbonCredit>().UpdateAsync(carboncredit);
+
+
 
                 sellerWallet.CarbonUnit += listing.CarbonCredit.Credits.Value;
                 sellerWallet.UpdateAt = TimeUtil.GetCurrentSEATime();

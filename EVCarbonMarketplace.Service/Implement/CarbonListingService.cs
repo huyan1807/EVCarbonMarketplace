@@ -59,6 +59,7 @@ namespace EVCarbonMarketplace.Service.Implement
             CarbonLT.Type = type.ToString();
             CarbonLT.Status = CarbonListingEnum.ListingStatus.Active.ToString();
             CarbonLT.CarbonCreditId = request.CarbonCreditId;
+
             await _unitOfWork.GetRepository<CarbonListing>().InsertAsync(CarbonLT);
             var iSuccess = await _unitOfWork.CommitAsync() > 0;
             if(!iSuccess) throw new Exception("Có lỗi trong quá trình tạo");
@@ -116,8 +117,13 @@ namespace EVCarbonMarketplace.Service.Implement
             listing.UpdateAt = TimeUtil.GetCurrentSEATime();
             _unitOfWork.GetRepository<CarbonListing>().UpdateAsync(listing);
 
-            var ok = await _unitOfWork.CommitAsync() > 0;
-            if (!ok) throw new Exception("Có lỗi trong quá trình hết hạn bài đăng");
+            var carbonCredit = listing.CarbonCredit;
+            carbonCredit.Status = CarbonCreditEnum.Available.ToString();
+            carbonCredit.UpdateAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<CarbonCredit>().UpdateAsync(carbonCredit);
+
+            var result = await _unitOfWork.CommitAsync() > 0;
+            if (!result) throw new Exception("Có lỗi trong quá trình hết hạn bài đăng");
 
             return new BaseResponse<bool>
             {
@@ -129,6 +135,12 @@ namespace EVCarbonMarketplace.Service.Implement
 
         public async Task<BaseResponse<IPaginate<CarbonListingManagerResponse>>> GetAll(int page, int size, CarbonListingEnum.ListingType? type, CarbonListingEnum.ListingStatus? status)
         {
+            var accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: x => x.Id == accountId && x.IsActive == true
+                ) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+            var now = TimeUtil.GetCurrentSEATime();
+            _logger.LogInformation("now = {Now}", now);
             if (page <= 0 || size <= 0) throw new BadHttpRequestException("Trang và kích thước trang phải lớn hơn 0");
             var CreditListing = await _unitOfWork.GetRepository<CarbonListing>().GetPagingListAsync(
                 
@@ -152,7 +164,8 @@ namespace EVCarbonMarketplace.Service.Implement
 
                 predicate: x => x.IsActive == true
                 && ((type == null || x.Type.ToLower() == type.ToString().ToLower())
-                && (status == null || x.Status.ToLower() == status.ToString().ToLower())) && x.EndTime > TimeUtil.GetCurrentSEATime(),
+                && (status == null || x.Status.ToLower() == status.ToString().ToLower())) && (account.Role != RoleEnum.CcBuyer.ToString()
+                || (x.StartTime <= now && x.EndTime > now)),
                 include: source => source.Include(x => x.Account).Include(x => x.CarbonCredit).ThenInclude(x => x.CarbonEmission).ThenInclude(x => x.ElectricVehicle),
                 page: page,
                 size: size
