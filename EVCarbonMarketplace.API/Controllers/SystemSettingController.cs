@@ -26,7 +26,7 @@ namespace EVCarbonMarketplace.API.Controllers
             return StatusCode(int.Parse(response.Status), response);
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Cva")]
         [HttpPut(ApiEndPointConstant.SystemSetting.Update)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
