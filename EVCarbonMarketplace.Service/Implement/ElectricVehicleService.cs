@@ -66,8 +66,12 @@ namespace EVCarbonMarketplace.Service.Implement
             var vehicleType = await _unitOfWork.GetRepository<VehicleType>().SingleOrDefaultAsync(
                predicate: x => x.Id == request.VehicleTypeId && x.IsActive == true
                ) ?? throw new NotFoundException("Không tìm thấy loại xe");
+            var existingEV = await _unitOfWork.GetRepository<ElectricVehicle>().SingleOrDefaultAsync(
+                predicate: x => x.Vin.Equals(request.Vin) && x.IsActive == true
+                );
+            if (existingEV != null) throw new BadHttpRequestException("Xe điện này đã tồn tại trong hệ thống");
 
-            if(request.ImageUrl == null) throw new BadHttpRequestException("Ảnh xe không được để trống");
+            if (request.ImageUrl == null) throw new BadHttpRequestException("Ảnh xe không được để trống");
             var ev = _mapper.Map<ElectricVehicle>(request);
             ev.ImageUrl = await _uploadService.UploadImage(request.ImageUrl);
             ev.AccountId = accountId;

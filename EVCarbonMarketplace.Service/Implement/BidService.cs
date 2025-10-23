@@ -53,6 +53,7 @@ namespace EVCarbonMarketplace.Service.Implement
             {
                 listing.Status = CarbonListingEnum.ListingStatus.Expired.ToString();
                 listing.UpdateAt = TimeUtil.GetCurrentSEATime();
+                listing.IsActive = false;
                 _unitOfWork.GetRepository<CarbonListing>().UpdateAsync(listing);
 
                 var carboncredit = listing.CarbonCredit;

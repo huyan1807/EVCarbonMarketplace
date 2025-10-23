@@ -114,6 +114,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 throw new BadHttpRequestException("Bài đăng chưa hết hạn");
 
             listing.Status = CarbonListingEnum.ListingStatus.Expired.ToString();
+            listing.IsActive = false;
             listing.UpdateAt = TimeUtil.GetCurrentSEATime();
             _unitOfWork.GetRepository<CarbonListing>().UpdateAsync(listing);
 
