@@ -46,6 +46,15 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _transactionService.GetMyTransaction(page, size, type, status);
             return StatusCode(StatusCodes.Status200OK, response);
         }
+        [HttpGet(ApiEndPointConstant.Transaction.GetById)]
+        [ProducesResponseType(typeof(BaseResponse<TransactionUserResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<TransactionUserResponse>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        {
+            var response = await _transactionService.GetById(id);
+            return StatusCode(StatusCodes.Status200OK, response);
+        }
 
     }
 }

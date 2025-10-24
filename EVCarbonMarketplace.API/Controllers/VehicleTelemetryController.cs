@@ -25,5 +25,14 @@ namespace EVCarbonMarketplace.API.Controllers
             var response = await _vehicleTelemetryService.GetVehicleTelemetry(page, size, id);
             return StatusCode(StatusCodes.Status200OK, response);
         }
+        [HttpDelete(ApiEndPointConstant.VehicleTelemetry.Delete)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var response = await _vehicleTelemetryService.Delete(id);           
+            return StatusCode(StatusCodes.Status200OK, response);
+        }
     }
 }

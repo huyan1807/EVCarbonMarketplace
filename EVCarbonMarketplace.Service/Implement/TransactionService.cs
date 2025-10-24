@@ -60,6 +60,33 @@ namespace EVCarbonMarketplace.Service.Implement
             };
         }
 
+        public async Task<BaseResponse<TransactionUserResponse>> GetById(Guid id)
+        {
+            var transaction = await _unitOfWork.GetRepository<Transaction>().SingleOrDefaultAsync(
+                predicate: x => x.Id == id && x.IsActive == true,
+                include: i => i.Include(w => w.Wallet).Include(b => b.Buyer).Include(s => s.Seller).Include(l => l.CarbonListing).ThenInclude(c => c.CarbonCredit).ThenInclude(e => e.CarbonEmission)
+                );
+            if (transaction == null) throw new NotFoundException("Không tìm thấy giao dịch");
+            var response = new TransactionUserResponse
+            {
+                Id = transaction.Id,
+                CarbonListingId = transaction.CarbonListingId,
+                CarbonCreditId = transaction.CarbonListing.CarbonCreditId,
+                Type = transaction.Type,
+                Status = transaction.Status,
+                Amount = transaction.Amount,
+                CreateAt = transaction.CreateAt,
+                Description = transaction.Description,
+                FeeRate = transaction.FeeRate
+            };
+            return new BaseResponse<TransactionUserResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy thông tin giao dịch thành công",
+                Data = response
+            };
+        }
+
         public async Task<BaseResponse<IPaginate<TransactionUserResponse>>> GetMyTransaction(int page, int size, TransactionEnum? type, TransactionStatusEnum? status)
         {
             var accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);

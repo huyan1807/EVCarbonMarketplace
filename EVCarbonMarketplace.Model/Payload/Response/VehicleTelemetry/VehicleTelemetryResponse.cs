@@ -14,5 +14,7 @@ namespace EVCarbonMarketplace.Model.Payload.Response.VehicleTelemetry
         public decimal? DistanceTravelled { get; set; }
         public decimal? EnergyConsumed { get; set; }
         public decimal? BatteryLevel { get; set; }
+
+        public string IsActive { get; set; }
     }
 }

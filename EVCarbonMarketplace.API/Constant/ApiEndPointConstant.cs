@@ -122,6 +122,7 @@
             public const string Purchase = TransactionEndPoint + "/purchase/{listingId}";
             public const string GetMyTransactions = TransactionEndPoint + "/my-transactions";
             public const string GetAll = TransactionEndPoint;
+            public const string GetById = TransactionEndPoint + "/{id}";
         }
 
         public static class Bid
@@ -136,6 +137,7 @@
             public const string VehicleTelemetryEndPoint = ApiEndpoint + "/vehicle-telemetry";
             public const string LogTelemetry = VehicleTelemetryEndPoint;
             public const string GetByEVehicle = VehicleTelemetryEndPoint + "/by-EVehicle/{id}";
+            public const string Delete = VehicleTelemetryEndPoint + "/{id}";
         }
         
         public static class BankAccount

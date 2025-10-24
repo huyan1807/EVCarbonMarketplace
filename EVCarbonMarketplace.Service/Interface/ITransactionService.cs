@@ -18,6 +18,8 @@ namespace EVCarbonMarketplace.Service.Interface
         Task<BaseResponse<IPaginate<TransactionUserResponse>>> GetAll(int page, int size, TransactionEnum? type , TransactionStatusEnum? status);
         Task<BaseResponse<IPaginate<TransactionUserResponse>>> GetMyTransaction(int page, int size, TransactionEnum? type, TransactionStatusEnum? status);
 
+        Task<BaseResponse<TransactionUserResponse>> GetById(Guid id);
+
 
     }
 }

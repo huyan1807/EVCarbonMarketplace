@@ -13,6 +13,7 @@ namespace EVCarbonMarketplace.Service.Interface
     public interface IVehicleTelemetryService
     {
         Task<BaseResponse<IPaginate<VehicleTelemetryResponse>>> GetVehicleTelemetry(int page , int size ,Guid id);
+        Task<BaseResponse<bool>> Delete(Guid id);
 
     }
 }
