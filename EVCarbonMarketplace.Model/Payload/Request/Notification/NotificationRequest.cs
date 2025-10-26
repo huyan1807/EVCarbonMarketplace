@@ -16,6 +16,7 @@ namespace EVCarbonMarketplace.Model.Payload.Request.Notification
         [FirestoreProperty] public string Body { get; set; } = default!;
         [FirestoreProperty] public string Type { get; set; }
         [FirestoreProperty] public bool IsRead { get; set; } = false;
+        [FirestoreProperty] public string? ListingId { get; set; }
         [FirestoreProperty] public Timestamp CreatedAt { get; set; }
 
     }
