@@ -386,7 +386,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 {
                     UserId = previousLeader.AccountId.ToString(),
                     Title = "Bạn đã bị vượt giá",
-                    Body = $"Có người đã đặt {request.Price:N0} cao hơn giá của bạn {previousLeader.Price:N0}" +
+                    Body = $"Có người đã đặt {request.Price:N0} cao hơn giá của bạn {previousLeader.Price:N0} " +
                     $"Hệ thống đã hoàn lại {amountToRefund:N0} VND vào ví của bạn.",
                     Type = NotificationType.Auction.ToString()
                 });
