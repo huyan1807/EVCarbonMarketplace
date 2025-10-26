@@ -379,6 +379,8 @@ namespace EVCarbonMarketplace.Service.Implement
                 previousBuyerWallet.Cash += amountToRefund;
                 previousBuyerWallet.UpdateAt = TimeUtil.GetCurrentSEATime();
                 _unitOfWork.GetRepository<Wallet>().UpdateAsync(previousBuyerWallet);
+                var result = await _unitOfWork.CommitAsync() > 0;
+                if (!result) throw new Exception("Có lỗi trong quá trình hoàn tiền");
 
                 await _notificationService.Create(new NotificationRequest
                 {
