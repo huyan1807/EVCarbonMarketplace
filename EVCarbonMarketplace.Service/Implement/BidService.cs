@@ -179,7 +179,9 @@ namespace EVCarbonMarketplace.Service.Implement
                 Title = "Chúc mừng! Bạn đã thắng đấu giá",
                 Body = $"Bạn đã thắng đấu giá với giá {highestBid.Price:n0}. " +
               $"{listing.CarbonCredit.Credits} tín chỉ carbon đã được cộng vào ví của bạn.",
-                Type = NotificationType.Auction.ToString()
+                Type = NotificationType.Auction.ToString(),
+                ListingId = listing.Id.ToString()
+
             });
 
             await _notificationService.Create(new NotificationRequest
@@ -188,7 +190,8 @@ namespace EVCarbonMarketplace.Service.Implement
                 Title = "Đã bán tín chỉ carbon thành công",
                 Body = $"Đã được bán với giá {highestBid.Price:n0}. " +
                        $"Sau khi trừ phí {feeRate}% ({feeAmount:n0}), bạn nhận được {sellerReceive:n0} vào ví.",
-                Type = NotificationType.Sale.ToString()
+                Type = NotificationType.Sale.ToString(),
+                ListingId = listing.Id.ToString()
             });
             foreach (var loser in loserWallets)
             {
@@ -348,7 +351,8 @@ namespace EVCarbonMarketplace.Service.Implement
                 Body = previousPrice > 0
           ? $"Bạn đã nâng giá từ {previousPrice:N0} lên {request.Price:N0}"
           : $"Bạn đã đặt giá {request.Price:N0}. Số tiền {requiredHold:N0} VND đã được giữ tạm thời.",
-                Type = NotificationType.Auction.ToString()
+                Type = NotificationType.Auction.ToString(),
+                ListingId = listing.Id.ToString()
             });
 
             await _notificationService.Create(new NotificationRequest
@@ -388,7 +392,8 @@ namespace EVCarbonMarketplace.Service.Implement
                     Title = "Bạn đã bị vượt giá",
                     Body = $"Có người đã đặt {request.Price:N0} cao hơn giá của bạn {previousLeader.Price:N0} " +
                     $"Hệ thống đã hoàn lại {amountToRefund:N0} VND vào ví của bạn.",
-                    Type = NotificationType.Auction.ToString()
+                    Type = NotificationType.Auction.ToString(),
+                    ListingId = listing.Id.ToString()
                 });
 
             }

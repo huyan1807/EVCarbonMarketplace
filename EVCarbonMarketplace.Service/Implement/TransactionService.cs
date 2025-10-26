@@ -221,7 +221,8 @@ namespace EVCarbonMarketplace.Service.Implement
                 Body = $"Tín chỉ carbon của bạn đã được bán thành công",
                 Title = "Bán tín chỉ carbon thành công",
                 Type = NotificationType.Purchase.ToString(),
-                UserId = listing.AccountId.ToString(),                              
+                UserId = listing.AccountId.ToString(),
+                ListingId = listing.Id.ToString()
             });
             // Send notification to buyer
             await _notificationService.Create(new NotificationRequest
@@ -230,6 +231,7 @@ namespace EVCarbonMarketplace.Service.Implement
                 Title = "Mua tín chỉ carbon thành công",
                 Type = NotificationType.Sale.ToString(),
                 UserId = accountId.ToString(),
+                ListingId = listing.Id.ToString()
             });
 
             var response = new TransactionResponse
