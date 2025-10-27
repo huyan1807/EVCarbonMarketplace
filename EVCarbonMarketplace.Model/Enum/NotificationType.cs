@@ -13,6 +13,7 @@ namespace EVCarbonMarketplace.Model.Enum
         Auction, 
         Sale,
         Expired,
+        Credit
 
     }
 }

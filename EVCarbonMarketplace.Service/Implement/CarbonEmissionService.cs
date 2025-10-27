@@ -3,6 +3,7 @@ using EVCarbonMarketplace.Model.Entity;
 using EVCarbonMarketplace.Model.Enum;
 using EVCarbonMarketplace.Model.Exceptions;
 using EVCarbonMarketplace.Model.Paginate;
+using EVCarbonMarketplace.Model.Payload.Request.Notification;
 using EVCarbonMarketplace.Model.Payload.Response;
 using EVCarbonMarketplace.Model.Payload.Response.CarbonEmission;
 using EVCarbonMarketplace.Model.Utils;
@@ -11,6 +12,7 @@ using EVCarbonMarketplace.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
 using Org.BouncyCastle.Asn1.Cms;
 using System;
 using System.Collections.Generic;
@@ -23,9 +25,11 @@ namespace EVCarbonMarketplace.Service.Implement
     public class CarbonEmissionService : BaseService<CarbonEmissionService>, ICarbonEmissionService
     {
         private readonly IFileReaderService _fileReaderService;
-        public CarbonEmissionService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<CarbonEmissionService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IFileReaderService fileReaderService) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        private readonly INotificationService _notificationService;
+        public CarbonEmissionService(IUnitOfWork<EvcarbonMarketplaceContext> unitOfWork, ILogger<CarbonEmissionService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IFileReaderService fileReaderService, INotificationService notificationService) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
             _fileReaderService = fileReaderService;
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponse<CarbonEmissionResponse>> ApproveEmission(Guid id, CarbonEmissionEnum status)
@@ -72,11 +76,30 @@ namespace EVCarbonMarketplace.Service.Implement
                _unitOfWork.GetRepository<Wallet>().UpdateAsync(wallet);
                 emission.Status = CarbonEmissionEnum.Approved.ToString();
                 _unitOfWork.GetRepository<CarbonEmission>().UpdateAsync(emission);
-               
-            }else
+                await _notificationService.Create(new NotificationRequest
+                {
+                    UserId = emission.ElectricVehicle.AccountId.ToString(),
+                    Title = "Cấp tín chỉ",
+                    Body = $"Bạn vừa được cấp {credit:N2} tín chỉ CO₂e cho xe {vehicle.Vin}.",
+                    Type = NotificationType.Credit.ToString(),
+                    IsRead = false,
+                });
+
+            }
+            else
             {
                 emission.Status = CarbonEmissionEnum.Rejected.ToString();
                 _unitOfWork.GetRepository<CarbonEmission>().UpdateAsync(emission);
+                await _notificationService.Create(new NotificationRequest
+                {
+                    UserId =emission.ElectricVehicle.AccountId.ToString(),
+                    Title = "Cấp tín chỉ",
+                    Body = $"Yêu cầu phát thải của xe {vehicle.Vin} đã bị từ chối. Vui lòng kiểm tra lại dữ liệu hoặc liên hệ hỗ trợ.",
+                    Type = NotificationType.Credit.ToString(),
+                    IsRead = false,
+                });
+
+
 
             }
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
