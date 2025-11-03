@@ -38,7 +38,7 @@ namespace EVCarbonMarketplace.Service.Implement
                    predicate: x => x.Id == request.CarbonCreditId && x.IsActive == true
                ) ?? throw new NotFoundException("Không tìm thấy tín chỉ");
             var Creditlisting = await _unitOfWork.GetRepository<CarbonListing>().SingleOrDefaultAsync(
-                predicate: x => x.CarbonCreditId == request.CarbonCreditId && x.IsActive == true
+                predicate: x => x.CarbonCreditId == request.CarbonCreditId && x.IsActive == true && x.Status == CarbonListingEnum.ListingStatus.Active.ToString()
                 );
             if (Creditlisting != null) throw new BadHttpRequestException("Tín chỉ đã được đăng bán");
             var sellerWallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
