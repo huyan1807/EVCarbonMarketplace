@@ -84,6 +84,18 @@ namespace EVCarbonMarketplace.Service.Implement
                     Data = false
                 };
             }
+            var isUsed = await _unitOfWork.GetRepository<ElectricVehicle>().SingleOrDefaultAsync(
+                 predicate: v => v.VehicleTypeId == id && v.IsActive == true);
+
+            if (isUsed != null)
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = "Không thể xóa vì loại xe này đang được sử dụng",
+                    Data = false
+                };
+            }
 
             vehicleType.IsActive = false;
             vehicleType.DeleteAt = TimeUtil.GetCurrentSEATime();
