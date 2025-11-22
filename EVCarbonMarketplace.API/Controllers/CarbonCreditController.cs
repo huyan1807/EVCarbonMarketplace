@@ -22,9 +22,9 @@ namespace EVCarbonMarketplace.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<IPaginate<CarbonCreditResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<CarbonCreditResponse>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetMyCredits([FromQuery] CarbonCreditEnum? status = null)
+        public async Task<IActionResult> GetMyCredits([FromQuery] CarbonCreditEnum? status = null , [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
-            var response = await _carbonCreditService.GetMyCredits(status);
+            var response = await _carbonCreditService.GetMyCredits(page,size,status);
             return StatusCode(StatusCodes.Status200OK, response);
         }
         [Authorize(Roles = "Cva,Admin")]

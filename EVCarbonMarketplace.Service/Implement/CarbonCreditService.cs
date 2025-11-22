@@ -99,7 +99,7 @@ namespace EVCarbonMarketplace.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<IPaginate<CarbonCreditResponse>>> GetMyCredits(CarbonCreditEnum? status)
+        public async Task<BaseResponse<IPaginate<CarbonCreditResponse>>> GetMyCredits(int page, int size, CarbonCreditEnum? status)
         {
             var accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
@@ -129,7 +129,9 @@ namespace EVCarbonMarketplace.Service.Implement
 
                 predicate: x => x.AccountId == accountId && x.IsActive == true && (status ==null || x.Status.Equals(status.ToString())),
 
-                include: x => x.Include(c => c.CarbonEmission).ThenInclude(e => e.ElectricVehicle)                            
+                include: x => x.Include(c => c.CarbonEmission).ThenInclude(e => e.ElectricVehicle),
+                page: page,
+                size: size
                 );
 
             return new BaseResponse<IPaginate<CarbonCreditResponse>>

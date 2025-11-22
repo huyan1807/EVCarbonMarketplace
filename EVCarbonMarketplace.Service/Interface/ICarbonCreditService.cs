@@ -13,7 +13,7 @@ namespace EVCarbonMarketplace.Service.Interface
 {
     public interface ICarbonCreditService
     {
-        Task<BaseResponse<IPaginate<CarbonCreditResponse>>> GetMyCredits(CarbonCreditEnum? status);
+        Task<BaseResponse<IPaginate<CarbonCreditResponse>>> GetMyCredits(int page, int size ,CarbonCreditEnum? status);
 
         Task<BaseResponse<IPaginate<CarbonCreditManageResponse>>> GetAllCredits(int page ,int size , CarbonCreditEnum? status);
 
