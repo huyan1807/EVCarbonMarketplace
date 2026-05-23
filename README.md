@@ -64,28 +64,6 @@ The platform enables users to securely buy, sell, and track carbon credits while
 
 ---
 
-# 📡 API Modules
-
-- User Management
-- Authentication
-- Carbon Credit Transactions
-- Payments
-- Analytics & Reporting
-- Media Upload
-- Notifications
-
----
-
-# ⚡ Performance Optimizations
-
-- Redis caching
-- Async/await programming patterns
-- Optimized Entity Framework queries
-- Logging with Microsoft.Extensions.Logging
-- Stateless API design for horizontal scaling
-
----
-
 # ☁️ Cloud & Third-Party Integrations
 
 | Service | Purpose |
@@ -125,16 +103,6 @@ The platform enables users to securely buy, sell, and track carbon credits while
 - Dependency Injection
 - Logging Middleware
 
----
-
-# 📈 Scalability
-
-- Stateless RESTful API architecture
-- Horizontal scaling support
-- Modular architecture for future microservices migration
-- Efficient caching and async processing to improve response times
-
----
 
 # 📄 Project Highlights
 
