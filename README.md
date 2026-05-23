@@ -145,8 +145,5 @@ The platform enables users to securely buy, sell, and track carbon credits while
 - Built cloud-ready architecture supporting scalability and maintainability
 - Integrated third-party services including Google OAuth, Cloudinary, Firebase, and PayOS
 
----
 
-# 👨‍💻 Author
 
-GitHub: https://github.com/huyan1807/EVCarbonMarketplace
